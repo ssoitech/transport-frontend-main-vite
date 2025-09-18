@@ -1,0 +1,33 @@
+.tab-container .nav-tabs {
+    border-bottom: none;
+}
+
+.nav-tabs .nav-item {
+    flex: 1;
+    text-align: center;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-radius: 0;
+    font-size: 14px;
+    padding: 10px 0;
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom: 3px solid #007bff;
+    background-color: transparent;
+    color: #0056b3;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+@media (max-width: 768px) {
+    .nav-tabs .nav-item {
+        font-size: 12px;
+    }
+}

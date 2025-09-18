@@ -1,0 +1,10 @@
+.iform-custom-css{
+    background-color: #e3f3f1;
+}
+.custom-hover-delete-icon{
+    color: red;
+}
+.custom-hover-delete-icon:hover{
+    color: #fff;
+    background-color: #8B0000;
+}

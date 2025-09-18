@@ -1,0 +1,14 @@
+.challanUnload-first-container{
+    padding: 5px;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    column-gap: 10px;
+    row-gap: 10px;
+}
+.challanUnload-second-container{
+    display: grid;
+    padding: 5px;
+    grid-template-columns: auto auto auto auto auto;
+    column-gap: 10px;
+    row-gap: 10px;
+}
