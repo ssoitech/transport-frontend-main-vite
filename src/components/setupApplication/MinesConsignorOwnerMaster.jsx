@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import Modal from './Modal';
 import { BaseUrl } from '../../services/BaseURI';
 import { toast, Toaster } from 'react-hot-toast';
@@ -19,7 +19,6 @@ function MinesConsignorOwnerMaster() {
     const [comms, setComms] = useState("");
     const [startSpneer, setStartSpneer] = useState(false);
 
-    const [postError, setPostError] = useState(false);
     const [displayModal, setDisplayModal] = useState(false);
     const [fnameIsEmpty, setFnameIsEmpty] = useState(false);
     const [snameIsEmpty, setSnameIsEmpty] = useState(false);
@@ -49,8 +48,7 @@ function MinesConsignorOwnerMaster() {
             navigate('/work-space');
         }
 
-    }, []);
-
+    }, [accessDetails, navigate]);
 
     async function getData() {
 
@@ -88,8 +86,7 @@ function MinesConsignorOwnerMaster() {
 
 
                 } else {
-                    setPostError(true);
-                    toast.success('Some Error Occured!', {
+                    toast.error('Some Error Occured!', {
                         position: "bottom-center",
                         style: {
                             background: "red",
@@ -196,7 +193,7 @@ function MinesConsignorOwnerMaster() {
                     });
                 }
             })
-            .catch(function (error) {
+            .catch(function () {
                 // handle error
 
                 Swal.fire({
@@ -244,10 +241,11 @@ function MinesConsignorOwnerMaster() {
                             <form className='justify-content-around' id="form1">
                                 <div className='row'>
                                     <div className="col-xl-4 form-group">
-                                        <label htmlFor="consignorName">Consignor Name</label>
+                                        {/* <div></div> */}
+                                        <label htmlFor="consignorName" className='py-2'>Consignor Name</label>
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control py-2"
                                             id="consignorName"
                                             placeholder=""
                                             onChange={(e) => { setFname(e.target.value) }}
@@ -257,10 +255,10 @@ function MinesConsignorOwnerMaster() {
                                     </div>
 
                                     <div className="col-xl-4 form-group">
-                                        <label htmlFor="shortName">Short Name</label>
+                                        <label htmlFor="shortName" className='py-2'>Short Name</label>
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control py-2"
                                             id="shortName"
                                             placeholder=""
                                             onChange={(e) => { setSname(e.target.value) }}
@@ -269,10 +267,10 @@ function MinesConsignorOwnerMaster() {
                                         {snameIsEmpty && <div className="text-sm text-danger font-weight-normal">This field should not be Empty!!</div>}
                                     </div>
                                     <div className="col-xl-4 form-group">
-                                        <label htmlFor="communication">Communication</label>
+                                        <label htmlFor="communication" className='py-2'>Communication</label>
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control py-2"
                                             id="communication"
                                             placeholder=""
                                             onChange={(e) => { setComms(e.target.value) }}
@@ -280,9 +278,9 @@ function MinesConsignorOwnerMaster() {
                                     </div>
                                 </div>
 
-                                <div id="buttons" className="btn-div">
+                                <div id="buttons" className="btn-div my-3">
                                     <button type="submit" form="form1" disabled={startSpneer} className="btn btn-sm btn-primary m-1" onClick={(e) => { handleSave(e) }}>
-                                        {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
+                                        {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" aria-label="Loading">
                                         </div>}
                                         <span>Save</span>
                                     </button>
@@ -324,14 +322,34 @@ function MinesConsignorOwnerMaster() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {ownerData.map((data, idx) => (
-                                            <tr key={idx}>
-                                                <td className='p-1 text-center'>{idx + 1}</td>
+                                        {ownerData.map((data) => (
+                                            <tr key={`owner-${data.id}-${data.shortName}`}>
+                                                <td className='p-1 text-center'>{ownerData.indexOf(data) + 1}</td>
                                                 <td className='p-1 text-left'>{data.name}</td>
                                                 <td className='p-1 text-left'>{data.communication}</td>
                                                 <td className='p-1 text-left'>{data.shortName}</td>
-                                                <td className='p-1 text-center' data-toggle="modal" data-target="#editModal" onClick={() => { handleEdit(data.id, data.name, data.communication, data.shortName) }}><i className="bi bi-pencil-square text-primary custom-cursor-hand"></i></td>
-                                                <td className='p-1 text-center'><i className="bi bi-trash text-danger custom-cursor-hand" onClick={() => { handleDelete(data.id) }}></i></td>
+                                                <td className='p-1 text-center'>
+                                                    <button 
+                                                        type="button"
+                                                        className="btn btn-sm btn-link p-0"
+                                                        data-toggle="modal" 
+                                                        data-target="#editModal" 
+                                                        onClick={() => { handleEdit(data.id, data.name, data.communication, data.shortName) }}
+                                                        aria-label="Edit item"
+                                                    >
+                                                        <i className="bi bi-pencil-square text-primary"></i>
+                                                    </button>
+                                                </td>
+                                                <td className='p-1 text-center'>
+                                                    <button 
+                                                        type="button"
+                                                        className="btn btn-sm btn-link p-0"
+                                                        onClick={() => { handleDelete(data.id) }}
+                                                        aria-label="Delete item"
+                                                    >
+                                                        <i className="bi bi-trash text-danger"></i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))}
 
@@ -339,7 +357,7 @@ function MinesConsignorOwnerMaster() {
                                 </table>
 
                             </div>
-                            : <div className="spinner-border text-primary m-5 text-center" role="status">
+                            : <div className="spinner-border text-primary m-5 text-center" aria-label="Loading data">
                                 <span className="sr-only">Loading...</span>
                             </div>
                         }

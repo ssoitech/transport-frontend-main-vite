@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { useForm, Controller } from 'react-hook-form';
-import DatePicker from 'react-datepicker';
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast, Toaster } from 'react-hot-toast';
 import Swal from "sweetalert2";
@@ -13,15 +12,13 @@ import { useSelector } from 'react-redux';
 function EditChallanHolder({ toggleState }) {
   const accessDetails = useSelector((state) => state.access.accessDetails);
 
-  const [isSaved, setIsSaved] = useState(false);
   const [startSpneer, setStartSpneer] = useState(false);
   const [postError, setPostError] = useState(false);
   const [searchedChallanHolderId, setSearchedChallanHolderId] = useState(null);
   const [searchedChallanHolderDetails, setSearchedchallanHolderDetails] = useState(null);
   const [searchByNameLoader, setSearchByNameLoader] = useState(false)
 
-
-  const { control, getValues, setValue, watch, register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { setValue, watch, register, handleSubmit, reset, formState: { errors } } = useForm();
 
 
   // Saving the data
@@ -35,7 +32,6 @@ function EditChallanHolder({ toggleState }) {
         console.log(response)
         setStartSpneer(false);
         if (response.data === "success") {
-          setIsSaved(true);
           setStartSpneer(false);
           toggleState();
           Swal.fire({
@@ -51,7 +47,7 @@ function EditChallanHolder({ toggleState }) {
           toast.error("Some Error Occured!");
         }
       })
-      .catch(function (error) {
+      .catch(() => {
         // handle error
         setStartSpneer(false);
         Swal.fire({
@@ -109,7 +105,7 @@ function EditChallanHolder({ toggleState }) {
     setValue("remarkEdit", searchedChallanHolderDetails.remark ? searchedChallanHolderDetails.remark : "");
     setValue("checkTds", searchedChallanHolderDetails.paymentHold == "Y" ? "Y" : null);
 
-  }, [searchedChallanHolderDetails])
+  }, [searchedChallanHolderDetails, setValue])
 
 
   const handleFindByName = async () => {
@@ -144,7 +140,7 @@ function EditChallanHolder({ toggleState }) {
       }
 
 
-    } catch (e) {
+    } catch {
       setSearchByNameLoader(false);
     }
 
@@ -152,318 +148,304 @@ function EditChallanHolder({ toggleState }) {
 
 
   return (
-    <div className='card overflow-auto'>
-      <div className='card-body'>
+    <div className='container-fluid'>
+      <div className='row justify-content-center'>
+        <div className='col-12 col-xl-11'>
+          <div className='card shadow-sm border-0'>
+            <div className='card-body p-4'>
+              {/* Search Section */}
+              <div className="mb-4">
+                <h5 className="card-title mb-3 text-primary fw-bold">Search Challan Holder</h5>
+                <div className="row g-3">
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="searchByName" className="form-label fw-semibold">
+                      Search By Name
+                    </label>
+                    <AutoComplete
+                      placeholder={"Enter holder name"}
+                      url={'/api/v1/challan-holder/get/all/names-ids?keyword='}
+                      datakey={"name"}
+                      customLoading={<span className="text-muted">Loading...</span>}
+                      onSelect={(res) => setSearchedChallanHolderId(res)}
+                      onChange={() => { }}
+                      onBlur={() => { }}
+                      onFocus={() => { }}
+                      customStyles={{}}
+                    />
+                  </div>
 
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="searchByContact" className="form-label fw-semibold">
+                      Search By Contact Number
+                    </label>
+                    <AutoComplete
+                      placeholder={"Enter contact number"}
+                      url={'/api/v1/challan-holder/get/all/contact-no-ids?keyword='}
+                      datakey={"name"}
+                      customLoading={<span className="text-muted">Loading...</span>}
+                      onSelect={(res) => setSearchedChallanHolderId(res)}
+                      onChange={() => { }}
+                      onBlur={() => { }}
+                      onFocus={() => { }}
+                      customStyles={{}}
+                    />
+                  </div>
 
-        <div className="container mt-3 mb-3">
-          <div className="row">
-            {/* Search By Name */}
-            <div className="col-md-4 position-relative">
-
-              <label htmlFor="ownerName" className="form-label">
-                Search By Name
-              </label>
-              <div className="d-flex">
-                <AutoComplete
-                  placeholder={"Search here"}
-                  url={'/api/v1/challan-holder/get/all/names-ids?keyword='}
-                  datakey={"name"}
-                  customLoading={<>Loading..</>}
-                  onSelect={(res) => setSearchedChallanHolderId(res)}
-                  onChange={(input) => { }}
-                  onBlur={(e) => { }}
-                  onFocus={(e) => { }}
-                  customStyles={{}}
-                />
-
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="searchByPAN" className="form-label fw-semibold">
+                      Search By PAN Number
+                    </label>
+                    <div className="d-flex gap-2">
+                      <AutoComplete
+                        placeholder={"Enter PAN number"}
+                        url={'/api/v1/challan-holder/get/all/pan-no-ids?keyword='}
+                        datakey={"name"}
+                        customLoading={<span className="text-muted">Loading...</span>}
+                        onSelect={(res) => setSearchedChallanHolderId(res)}
+                        onChange={() => { }}
+                        onBlur={() => { }}
+                        onFocus={() => { }}
+                        customStyles={{}}
+                      />
+                      <button 
+                        type="button" 
+                        className="btn btn-success px-4" 
+                        disabled={searchByNameLoader} 
+                        onClick={handleFindByName}
+                      >
+                        {searchByNameLoader ? (
+                          <>
+                            <output className="spinner-border spinner-border-sm me-2" aria-live="polite"></output>
+                            Loading...
+                          </>
+                        ) : (
+                          'Find'
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
+              <hr className="my-4" />
+
+
+              {/* Edit Form Section */}
+              <form id="form" onSubmit={handleSubmit(onSubmitEditedData)}>
+                <h5 className="card-title mb-3 text-primary fw-bold">Edit Challan Holder Details</h5>
+                
+                {/* Personal Information Section */}
+                <div className="row g-3 mb-4">
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="ownerNameEdit" className="form-label fw-semibold">Name <span className="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="ownerNameEdit"
+                      name='ownerNameEdit'
+                      placeholder="Enter full name"
+                      {...register("ownerNameEdit", { required: { value: true, message: 'Name is required' } })}
+                    />
+                    {errors.ownerName && <div className='text-danger small mt-1'>{errors.ownerName.message}</div>}
+                  </div>
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="contactEdit" className="form-label fw-semibold">Contact</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="contactEdit"
+                      name='contactEdit'
+                      placeholder="Enter contact number"
+                      {...register("contactEdit")}
+                    />
+                  </div>
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="panNumberEdit" className="form-label fw-semibold">PAN Number</label>
+                    <input
+                      type="text"
+                      className="form-control text-uppercase"
+                      id="panNumberEdit"
+                      name='panNumberEdit'
+                      placeholder="Enter PAN number"
+                      {...register("panNumberEdit", {
+                        pattern: {
+                          value: /[A-Z]{5}\d{4}[A-Z]/,
+                          message: "Please Enter Valid PAN Number"
+                        }
+                      })}
+                    />
+                    {errors.panNumber && <div className='text-danger small mt-1'>{errors.panNumber.message}</div>}
+                  </div>
+                </div>
+
+                {/* Address & Documents Section */}
+                <div className="row g-3 mb-4">
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="adharNumberEdit" className="form-label fw-semibold">Aadhar Number</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="adharNumberEdit"
+                      name="adharNumberEdit"
+                      placeholder="Enter Aadhar number"
+                      {...register("adharNumberEdit", {
+                        pattern: {
+                          value: /^\d{12}$/,
+                          message: "Please Enter Valid Adhar Number"
+                        }
+                      })}
+                    />
+                    {errors.adharNumber && <div className='text-danger small mt-1'>Please Enter Valid Aadhar Number</div>}
+                  </div>
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="linkedEdit" className="form-label fw-semibold">Adhar Linked with PAN</label>
+                    <select
+                      className="form-select"
+                      id="linkedEdit"
+                      name="linkedEdit"
+                      {...register("linkedEdit")}
+                    >
+                      <option value="">Select an option</option>
+                      <option value="no">No</option>
+                      <option value="yes">Yes</option>
+                    </select>
+                  </div>
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="addressEdit" className="form-label fw-semibold">Address</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="addressEdit"
+                      name="addressEdit"
+                      placeholder="Enter address"
+                      {...register("addressEdit")}
+                    />
+                  </div>
+                </div>
+
+                {/* Bank Details Section */}
+                <div className="row g-3 mb-4">
+                  <div className="col-12 col-md-6">
+                    <label htmlFor="accountNumberEdit" className="form-label fw-semibold">Bank A/C Number</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="accountNumberEdit"
+                      name="accountNumberEdit"
+                      placeholder="Enter account number"
+                      {...register("accountNumberEdit")}
+                    />
+                  </div>
+                  <div className="col-12 col-md-6">
+                    <label htmlFor="bankNameEdit" className="form-label fw-semibold">Bank Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="bankNameEdit"
+                      name="bankNameEdit"
+                      placeholder="Enter bank name"
+                      {...register("bankNameEdit")}
+                    />
+                  </div>
+                </div>
+
+                <div className="row g-3 mb-4">
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="ifscCodeEdit" className="form-label fw-semibold">IFSC Code</label>
+                    <input
+                      type="text"
+                      className="form-control text-uppercase"
+                      id="ifscCodeEdit"
+                      name="ifscCodeEdit"
+                      placeholder="Enter IFSC code"
+                      {...register("ifscCodeEdit")}
+                    />
+                  </div>
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="branchNameEdit" className="form-label fw-semibold">Branch Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="branchNameEdit"
+                      name="branchNameEdit"
+                      placeholder="Enter branch name"
+                      {...register("branchNameEdit")}
+                    />
+                  </div>
+                  <div className="col-12 col-md-4">
+                    <label htmlFor="remarkEdit" className="form-label fw-semibold">Remark</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="remarkEdit"
+                      name="remarkEdit"
+                      placeholder="Enter remark (optional)"
+                      {...register("remarkEdit")}
+                    />
+                  </div>
+                </div>
+
+                {/* Payment Hold Section */}
+                <div className="row g-3 mb-4">
+                  <div className="col-12">
+                    <div className="d-flex align-items-center gap-3">
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          name="checkTds"
+                          id="checkTds"
+                          value="Y"
+                          {...register("checkTds")}
+                        />
+                        <label className="form-check-label fw-semibold" htmlFor="checkTds">
+                          Payment Hold
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary btn-sm"
+                        disabled={watch("checkTds") !== "Y"}
+                        onClick={() => { reset() }}
+                      >
+                        Release Payment
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Buttons Section */}
+                <div className='d-flex justify-content-center gap-3 mt-4 pt-3 border-top'>
+                  <button type="submit" className="btn btn-primary px-4 py-2" disabled={startSpneer}>
+                    {startSpneer ? (
+                      <>
+                        <output className="spinner-border spinner-border-sm me-2" aria-live="polite"></output>
+                        Updating...
+                      </>
+                    ) : (
+                      'Update'
+                    )}
+                  </button>
+                  <button type="button" className="btn btn-outline-primary px-4 py-2" onClick={() => { reset() }}>
+                    Clear
+                  </button>
+                  <button type="button" className="btn btn-secondary px-4 py-2" onClick={() => { reset() }}>
+                    New
+                  </button>
+                </div>
+
+                {/* Error Messages */}
+                {postError && (
+                  <div className="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                    <i className="fas fa-exclamation-triangle me-2"></i>
+                    Some Error Occurred! Please try again.
+                    <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                )}
+              </form>
             </div>
-
-            {/* Search By Contact */}
-            <div className="col-md-4 position-relative">
-
-              <label htmlFor="ownerName" className="form-label">
-                Search By Contact Number
-              </label>
-              <div className="d-flex">
-                <AutoComplete
-                  placeholder={"Search here"}
-                  url={'/api/v1/challan-holder/get/all/contact-no-ids?keyword='}
-                  datakey={"name"}
-                  customLoading={<>Loading..</>}
-                  onSelect={(res) => setSearchedChallanHolderId(res)}
-                  onChange={(input) => { }}
-                  onBlur={(e) => { }}
-                  onFocus={(e) => { }}
-                  customStyles={{}}
-                />
-
-              </div>
-
-            </div>
-
-            {/* Search By PAN */}
-            <div className="col-md-4 position-relative">
-
-              <label htmlFor="ownerName" className="form-label">
-                Search By PAN Number
-              </label>
-              <div className="d-flex">
-                <AutoComplete
-                  placeholder={"Search here"}
-                  url={'/api/v1/challan-holder/get/all/pan-no-ids?keyword='}
-                  datakey={"name"}
-                  customLoading={<>Loading..</>}
-                  onSelect={(res) => setSearchedChallanHolderId(res)}
-                  onChange={(input) => { }}
-                  onBlur={(e) => { }}
-                  onFocus={(e) => { }}
-                  customStyles={{}}
-                />
-
-                <button type="button" className="btn btn-sm btn-success ml-2" disabled={searchByNameLoader} onClick={handleFindByName}>
-                  {searchByNameLoader ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                      Loading ...
-                    </>
-                  ) : (
-                    'Find'
-                  )}
-                </button>
-
-              </div>
-
-            </div>
-
           </div>
         </div>
-
-
-        <form
-          id="form"
-          onSubmit={handleSubmit(onSubmitEditedData)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-            }
-          }}
-        >
-          <div className="form-row g-3" >
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="ownerName">Name</label>
-              <input
-                type="text"
-                className="form-control form-control-sm border-dark-subtle"
-                id="ownerNameEdit"
-                name='ownerNameEdit'
-                {...register("ownerNameEdit", { required: { value: true, message: 'Name is required' } })}
-              />
-              {errors.ownerName && <p className='text-danger'>{errors.ownerName.message}</p>}
-            </div>
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="contact">Contact</label>
-              <input
-                type="number"
-                className="form-control form-control-sm border-dark-subtle"
-                id="contactEdit"
-                name='contactEdit'
-                {...register("contactEdit")}
-              />
-            </div>
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="panNumber">PAN Number</label>
-              <input
-                type="text"
-                className="form-control form-control-sm border-dark-subtle"
-                id="panNumberEdit"
-                name='panNumberEdit'
-                {...register("panNumberEdit", {
-                  pattern: {
-                    value: /[A-Z]{5}[0-9]{4}[A-Z]{1}/,
-                    message: "Please Enter Valid PAN Number"
-                  }
-                })}
-              />
-              {errors.panNumber && <p className='text-danger'>{errors.panNumber.message}</p>}
-            </div>
-          </div>
-          {/* second row */}
-          <div className="form-row g-3">
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="adharNumber">Aadhar Number</label>
-              <input
-                type="number"
-                className="form-control form-control-sm border-dark-subtle"
-                id="adharNumberEdit"
-                name="adharNumberEdit"
-                {...register("adharNumberEdit", {
-                  pattern: {
-                    value: /^([0-9]{4}[0-9]{4}[0-9]{4}$)|([0-9]{4}\s[0-9]{4}\s[0-9]{4}$)|([0-9]{4}-[0-9]{4}-[0-9]{4}$)/,
-                    message: "Please Enter Valid Adhar Number"
-                  }
-                })}
-              />
-              {errors.adharNumber && <p className='text-danger'>Please Enter Valid Aadhar Number</p>}
-            </div>
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="linked">Adhar Linked with PAN</label>
-              <select
-                className="form-select form-select-sm border-dark-subtle"
-                id="linkedEdit"
-                name="linkedEdit"
-
-                {...register("linkedEdit")}
-
-              >
-                <option value=""></option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-
-              </select>
-            </div>
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="address">Address</label>
-              <input
-                type="text"
-                className="form-control form-control-sm border-dark-subtle"
-                id="addressEdit"
-                name="addressEdit"
-                {...register("addressEdit")}
-              />
-            </div>
-          </div>
-          {/* third row */}
-          <div className="form-row g-3">
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="accountNumber">Bank A/C Number</label>
-              <input
-                type="text"
-                className="form-control form-control-sm border-dark-subtle"
-                id="accountNumberEdit"
-                name="accountNumberEdit"
-                {...register("accountNumberEdit")}
-              />
-            </div>
-
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="bankName">Bank Name</label>
-              <input
-                type="text"
-                className="form-control form-control-sm border-dark-subtle"
-                id="bankNameEdit"
-                name="bankNameEdit"
-                {...register("bankNameEdit")}
-              />
-            </div>
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="ifscCode">IFSC Code</label>
-              <input
-                type="text"
-                className="form-control form-control-sm border-dark-subtle"
-                id="ifscCodeEdit"
-                name="ifscCodeEdit"
-                {...register("ifscCodeEdit")}
-              />
-            </div>
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="branchName">Branch Name</label>
-              <input
-                type="text"
-                className="form-control form-control-sm border-dark-subtle"
-                id="branchNameEdit"
-                name="branchNameEdit"
-                {...register("branchNameEdit")}
-              />
-            </div>
-            <div className="form-group col-md-4 px-2">
-              <label htmlFor="remark">Remark</label>
-              <input
-                type="text"
-                className="form-control form-control-sm border-dark-subtle"
-                id="remarkEdit"
-                name="remarkEdit"
-                {...register("remarkEdit")}
-              />
-            </div>
-
-            <div className="form-group col-md-4 px-2">
-
-              <div className="form-check form-check-inline mt-4">
-
-                <label htmlFor="checkTds">Payment Hold</label>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-primary ml-3"
-                  disabled={watch("checkTds") === "Y" ? false : true}
-                  onClick={(e) => { reset() }}>
-                  Release Payment
-                </button>
-                <input
-                  className="form-check-input mt-1 border-dark-subtle"
-                  type="checkbox"
-                  name="checkTds"
-                  id="checkTds"
-                  value="Y"
-                  {...register("checkTds")}
-                />
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-
-          <div className='text-center'>
-            {/* <button type="submit" disabled={startSpneer} className="btn btn-primary ml-3">
-              {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
-
-              </div>}
-              <span>Update</span>
-            </button> */}
-
-            <button type="submit" className="btn btn-primary ml-3" disabled={startSpneer}>
-              {startSpneer ? (
-                <>
-                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  Updating ...
-                </>
-              ) : (
-                'Update'
-              )}
-            </button>
-
-
-            <button type="button" className="btn btn-outline-primary ml-3" onClick={(e) => { reset() }}>
-              Clear
-            </button>
-            <button type="button" className="btn btn-secondary ml-3" onClick={(e) => { reset() }}>
-              New
-            </button>
-          </div>
-          {
-            postError && <div className="alert alert-danger alert-dismissible fade show m-3" role="alert">
-              Some Error Occurred !!
-              <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-          }
-          {/* {
-                        isDuplicate && <div className="alert alert-warning fade show m-2" role="alert">
-                            Short Name already exist.
-                        </div>
-                    } */}
-          {/* {
-                        isSaved && <div className="alert alert-success fade show m-2" role="alert">
-                            Successfully Saved.
-                        </div>
-                    } */}
-        </form>
       </div>
       <Toaster
         position="bottom-center"

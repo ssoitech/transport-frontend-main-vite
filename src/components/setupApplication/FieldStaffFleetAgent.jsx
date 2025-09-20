@@ -35,8 +35,6 @@ function FieldStaffFleetAgent() {
   const [updateFieldData, setUpdateFieldData] = useState(false);
   const [displayFieldModal, setDisplayFieldModal] = useState(false);
 
-
-  const [postError, setPostError] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
   const [snameIsEmpty, setSnameIsEmpty] = useState(false);
   const [updateFleetData, setUpdateFleetData] = useState(false); // used in useEffect as a dependency to update the table.
@@ -79,7 +77,7 @@ function FieldStaffFleetAgent() {
       navigate('/work-space');
     }
 
-  }, []);
+  }, [accessDetails, navigate]);
 
 
 
@@ -135,7 +133,6 @@ function FieldStaffFleetAgent() {
           });
 
         } else {
-          setPostError(true);
           toast.error("Some Error Occured!");
         }
       })
@@ -176,7 +173,6 @@ function FieldStaffFleetAgent() {
 
         } else {
           toast.error("Some Error Occured!");
-          setPostError(true);
         }
       })
       .catch(function (error) {
@@ -320,7 +316,7 @@ function FieldStaffFleetAgent() {
           });
         }
       })
-      .catch(function (error) {
+      .catch(function () {
         // handle error
         Swal.fire({
           title: "Some Error Occured!!",
@@ -403,40 +399,39 @@ function FieldStaffFleetAgent() {
                     {/*  <!-- Card Body --> */}
                     <div className="card-body font-weight-normal textColor">
                       <form className="justify-content-around" id="form1">
-                        <div className="row">
-                          <div className="form-group m-1 col-sm">
-                            <div className="input-group input-group-sm m-1">
+                        <div className="row mb-3">
+                          <div className="col-md-6 mb-3">
+                            <div className="input-group">
                               <div className="input-group-prepend">
                                 <span
                                   className="input-group-text"
-                                  id="inputGroup-sizing-sm"
+                                  style={{minWidth: '120px', justifyContent: 'flex-start'}}
                                 >
                                   Name
                                 </span>
                               </div>
                               <input
                                 type="text"
-                                className="form-control form-control-sm w-75"
-                                aria-label="Small"
-                                aria-describedby="inputGroup-sizing-sm m-4"
+                                className="form-control"
+                                placeholder="Enter name"
                                 onChange={(e) => { setFleetDataName(e.target.value) }}
                               />
                             </div>
-                            {nameIsEmpty && <div className="text-sm text-danger font-weight-normal">Name should not be Empty!!</div>}
+                            {nameIsEmpty && <div className="text-sm text-danger font-weight-normal mt-1">Name should not be Empty!!</div>}
                           </div>
 
-                          <div className="form-group m-1 col-sm">
-                            <div className="input-group input-group-sm m-1">
+                          <div className="col-md-6 mb-3">
+                            <div className="input-group">
                               <div className="input-group-prepend">
                                 <span
                                   className="input-group-text"
-                                  id="inputGroup-sizing-sm"
+                                  style={{minWidth: '120px', justifyContent: 'flex-start'}}
                                 >
                                   As on Date
                                 </span>
                               </div>
                               <DatePicker
-                                className="date-picker-input pl-2 ml-1 w-100"
+                                className="form-control"
                                 selected={fleetDataDate}
                                 onChange={handleDateChange}
                                 dateFormat="d-MMM-yyyy"
@@ -445,67 +440,63 @@ function FieldStaffFleetAgent() {
                                 id='fleetDate'
                               />
                             </div>
-                            {/* {snameIsEmpty && <div className="text-sm text-danger font-weight-normal">Short Name should not be Empty!!</div>} */}
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="form-group m-1 col-sm">
-                            <div className="input-group input-group-sm m-1">
+                        <div className="row mb-3">
+                          <div className="col-md-8 mb-3">
+                            <div className="input-group">
                               <div className="input-group-prepend">
                                 <span
                                   className="input-group-text"
-                                  id="inputGroup-sizing-sm"
+                                  style={{minWidth: '150px', justifyContent: 'flex-start'}}
                                 >
                                   Opening as on date
                                 </span>
                               </div>
                               <input
                                 type="text"
-                                className="form-control form-control-sm"
-                                aria-label="Small"
-                                aria-describedby="inputGroup-sizing-sm"
+                                className="form-control"
+                                placeholder="Enter opening amount"
                                 onChange={(e) => { setFleetDataAmount(e.target.value) }}
                               />
                             </div>
                           </div>
 
-                          <div className="form-group m-1 col-sm">
-                            <div className="input-group input-group-sm m-1">
-                              <select
-                                class="form-select"
-                                id="floatingSelect"
-                                aria-label="Floating label select example"
-                                onChange={(e) => { setFleetOptionValue(e.target.value) }}
-                              >
-                                <option defaultValue value="Dr">Dr</option>
-                                <option value="Cr">Cr</option>
-                              </select>
-                            </div>
+                          <div className="col-md-4 mb-3">
+                            <select
+                              className="form-select form-control"
+                              aria-label="Select Dr/Cr"
+                              onChange={(e) => { setFleetOptionValue(e.target.value) }}
+                              style={{height: '38px'}}
+                            >
+                              <option defaultValue value="Dr">Dr</option>
+                              <option value="Cr">Cr</option>
+                            </select>
                           </div>
                         </div>
 
-                        <div
-                          id="buttons"
-                          className="btn-div mx-auto justify-content-around"
-                        >
-                          <button
-                            type="submit"
-                            form="form1"
-                            disabled={startSpneer}
-                            className="btn btn-sm btn-primary m-2"
-                            onClick={(e) => { handleSave(e) }}
-                          >
-                            {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
-
-                            </div>}
-                            Save
-                          </button>
-                          <button
-                            type="reset"
-                            className="btn btn-outline-primary btn-sm"
-                          >
-                            Clear
-                          </button>
+                        <div className="row">
+                          <div className="col-12">
+                            <div className="d-flex justify-content-center gap-3">
+                              <button
+                                type="submit"
+                                form="form1"
+                                disabled={startSpneer}
+                                className="btn btn-primary m-1"
+                                onClick={(e) => { handleSave(e) }}
+                              >
+                                {startSpneer && <div className="spinner-border text-light spinner-border-sm me-2" role="status">
+                                </div>}
+                                Save
+                              </button>
+                              <button
+                                type="reset"
+                                className="btn btn-outline-primary m-1"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </form>
                     </div>
@@ -576,13 +567,13 @@ function FieldStaffFleetAgent() {
                     {/*  <!-- Card Body --> */}
                     <div className="card-body font-weight-normal textColor">
                       <form className="justify-content-around" id="form2">
-                        <div className="row">
-                          <div className="form-group m-1 col-sm">
-                            <div className="input-group input-group-sm m-1">
+                        <div className="row mb-3">
+                          <div className="col-md-6 mb-3">
+                            <div className="input-group">
                               <div className="input-group-prepend">
                                 <span
                                   className="input-group-text"
-                                  id="inputGroup-sizing-sm"
+                                  style={{minWidth: '120px', justifyContent: 'flex-start'}}
                                 >
                                   Name
                                 </span>
@@ -590,33 +581,25 @@ function FieldStaffFleetAgent() {
                               <input
                                 type="text"
                                 className="form-control"
-                                aria-label="Small"
-                                aria-describedby="inputGroup-sizing-sm m-4"
+                                placeholder="Enter name"
                                 onChange={(e) => { setFieldDataName(e.target.value) }}
                               />
                             </div>
-                            {fieldNameIsEmpty && <div className="text-sm text-danger font-weight-normal">Name should not be Empty!!</div>}
+                            {fieldNameIsEmpty && <div className="text-sm text-danger font-weight-normal mt-1">Name should not be Empty!!</div>}
                           </div>
 
-                          <div className="form-group m-1 col-sm">
-                            <div className="input-group input-group-sm m-1">
+                          <div className="col-md-6 mb-3">
+                            <div className="input-group">
                               <div className="input-group-prepend">
                                 <span
                                   className="input-group-text"
-                                  id="inputGroup-sizing-sm"
+                                  style={{minWidth: '120px', justifyContent: 'flex-start'}}
                                 >
                                   As on Date
                                 </span>
                               </div>
-                              {/* <input
-                                type="date"
-                                className="form-control"
-                                aria-label="Small"
-                                aria-describedby="inputGroup-sizing-sm"
-                                onChange={(e) => { setFieldDataDate(e.target.value) }}
-                              /> */}
                               <DatePicker
-                                className="date-picker-input pl-2 ml-1 w-100"
+                                className="form-control"
                                 selected={fieldDataDate}
                                 onChange={handleFieldDateChange}
                                 dateFormat="d-MMM-yyyy"
@@ -625,7 +608,6 @@ function FieldStaffFleetAgent() {
                                 id='fieldDate'
                               />
                             </div>
-                            {/* {snameIsEmpty && <div className="text-sm text-danger font-weight-normal">Short Name should not be Empty!!</div>} */}
                           </div>
                         </div>
                         <div className="row">

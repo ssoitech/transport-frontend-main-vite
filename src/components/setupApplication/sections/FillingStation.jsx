@@ -35,7 +35,7 @@ function FillingStation() {
             {/* <button type="button" className="btn btn-sm btn-primary ml-4 mb-4" onClick={handleClickPump}>Pump</button>
             <button type="button" className="btn btn-sm btn-secondary ml-4 mb-4" onClick={handleClickRate}>Rate</button> */}
 
-            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <div class="btn-group my-3" role="group" aria-label="Basic radio toggle button group">
                 <input type="radio" className="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked={displayPump} onClick={handleClickPump} />
                 <label class="btn btn-outline-secondary" for="btnradio1">Pump</label>
 

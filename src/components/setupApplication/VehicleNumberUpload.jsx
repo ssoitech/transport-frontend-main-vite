@@ -13,10 +13,10 @@ const VehicleNumberUpload = () => {
     const [panNotFoundData, setPanNotFoundData] = useState([]);
     const [duplicateVehicleNumber, setDuplicateVehicleNumber] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        pan: '',
-        vehicleNumber: ''
-    });
+    // const [formData, setFormData] = useState({
+    //     pan: '',
+    //     vehicleNumber: ''
+    // });
 
     useEffect(() => {
         if (accessDetails) {
@@ -68,30 +68,30 @@ const VehicleNumberUpload = () => {
         reader.readAsArrayBuffer(file);
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFormData({ ...formData, [name]: value });
+    // };
 
-    function toCamelCase(str) {
-        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
-            if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
-            return index === 0 ? match.toLowerCase() : match.toUpperCase();
-        });
-    }
+    // function toCamelCase(str) {
+    //     return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
+    //         if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+    //         return index === 0 ? match.toLowerCase() : match.toUpperCase();
+    //     });
+    // }
 
-    function convertKeysToCamelCase(obj) {
-        if (Array.isArray(obj)) {
-            return obj.map(v => convertKeysToCamelCase(v));
-        } else if (obj !== null && obj.constructor === Object) {
-            return Object.keys(obj).reduce((result, key) => {
-                const camelCaseKey = toCamelCase(key);
-                result[camelCaseKey] = convertKeysToCamelCase(obj[key]);
-                return result;
-            }, {});
-        }
-        return obj;
-    }
+    // function convertKeysToCamelCase(obj) {
+    //     if (Array.isArray(obj)) {
+    //         return obj.map(v => convertKeysToCamelCase(v));
+    //     } else if (obj !== null && obj.constructor === Object) {
+    //         return Object.keys(obj).reduce((result, key) => {
+    //             const camelCaseKey = toCamelCase(key);
+    //             result[camelCaseKey] = convertKeysToCamelCase(obj[key]);
+    //             return result;
+    //         }, {});
+    //     }
+    //     return obj;
+    // }
 
     const handleSaveToDatabase = async () => {
         setLoading(true);
@@ -154,7 +154,7 @@ const VehicleNumberUpload = () => {
                     </Col>
                 </Row>
                 <Row className="my-3">
-                    <Col>
+                    <Col className='d-flex justify-content-evenly'>
                         <button className="btn btn-primary mr-4" onClick={handleDownload}> Get Template</button>
                         <Button variant="secondary" onClick={handleNew}>New</Button>
                         {/* <Button variant="success" className="ml-3" onClick={handleSaveToDatabase}>Save to Database</Button> */}

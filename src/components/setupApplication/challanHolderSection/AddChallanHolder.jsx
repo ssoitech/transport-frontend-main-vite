@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast, Toaster } from 'react-hot-toast';
 import Swal from "sweetalert2";
@@ -12,14 +12,10 @@ import { useSelector } from 'react-redux';
 function AddChallanHolder({ toggleState }) {
     const accessDetails = useSelector((state) => state.access.accessDetails);
 
-    const [isSaved, setIsSaved] = useState(false);
     const [startSpneer, setStartSpneer] = useState(false);
     const [postError, setPostError] = useState(false);
 
-
-    const { control, getValues, setValue, watch, register, handleSubmit, reset, formState: { errors } } = useForm();
-
-    console.log(accessDetails);
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
     // Saving the data
     async function postData(fdata) {
@@ -40,7 +36,6 @@ function AddChallanHolder({ toggleState }) {
                     return;
                 }
                 if (response.data === "success") {
-                    setIsSaved(true);
                     setStartSpneer(false);
                     toggleState();
                     Swal.fire({
@@ -65,17 +60,12 @@ function AddChallanHolder({ toggleState }) {
                 // handle error
                 console.log(error.response);
                 if (error.response.data === "duplicate" && error.response.status === 409) {
-                    // setIsDuplicate(true);
-                    setStartSpneer(false);
-                    // toast.error("Owner already exists.");
                     Swal.fire({
                         icon: "warning",
                         text: "Owner already exists.",
                         confirmButtonText: "OK",
                     }).then((result) => {
-                        /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
-
                             return;
                         }
                     });
@@ -128,194 +118,198 @@ function AddChallanHolder({ toggleState }) {
 
 
     return (
-        <div className='card overflow-auto'>
-            <div className='card-body'>
-                <form
-                    id="form"
-                    onSubmit={handleSubmit(onSubmit)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            e.preventDefault();
-                        }
-                    }}
-                >
-                    <div className="form-row g-3">
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="ownerName">Name</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="ownerName"
-                                name='ownerName'
-                                {...register("ownerName", { required: { value: true, message: 'Name is required' } })}
-                            />
-                            {errors.ownerName && <p className='text-danger'>{errors.ownerName.message}</p>}
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="contact">Contact</label>
-                            <input
-                                type="number"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="contact"
-                                name='contact'
-                                {...register("contact")}
-                            />
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="panNumber">PAN Number</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="panNumber"
-                                name='panNumber'
-                                {...register("panNumber", {
-                                    pattern: {
-                                        value: /[A-Z]{5}[0-9]{4}[A-Z]{1}/,
-                                        message: "Please Enter Valid PAN Number"
-                                    }
-                                })}
-                            />
-                            {errors.panNumber && <p className='text-danger'>{errors.panNumber.message}</p>}
+        <div className='container-fluid'>
+            <div className='row justify-content-center'>
+                <div className='col-12 col-xl-11'>
+                    <div className='card shadow-sm border-0'>
+                        <div className='card-body p-4'>
+                            <form id="form" onSubmit={handleSubmit(onSubmit)}>
+                                {/* Personal Information Section */}
+                                <div className="row g-3 mb-4">
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="ownerName" className="form-label fw-semibold">Name <span className="text-danger">*</span></label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="ownerName"
+                                            name='ownerName'
+                                            placeholder="Enter full name"
+                                            {...register("ownerName", { required: { value: true, message: 'Name is required' } })}
+                                        />
+                                        {errors.ownerName && <div className='text-danger small mt-1'>{errors.ownerName.message}</div>}
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="contact" className="form-label fw-semibold">Contact</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            id="contact"
+                                            name='contact'
+                                            placeholder="Enter contact number"
+                                            {...register("contact")}
+                                        />
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="panNumber" className="form-label fw-semibold">PAN Number</label>
+                                        <input
+                                            type="text"
+                                            className="form-control text-uppercase"
+                                            id="panNumber"
+                                            name='panNumber'
+                                            placeholder="Enter PAN number"
+                                            {...register("panNumber", {
+                                                pattern: {
+                                                    value: /[A-Z]{5}\d{4}[A-Z]/,
+                                                    message: "Please Enter Valid PAN Number"
+                                                }
+                                            })}
+                                        />
+                                        {errors.panNumber && <div className='text-danger small mt-1'>{errors.panNumber.message}</div>}
+                                    </div>
+                                </div>
+
+                                {/* Address & Documents Section */}
+                                <div className="row g-3 mb-4">
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="adharNumber" className="form-label fw-semibold">Aadhar Number</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            id="adharNumber"
+                                            placeholder="Enter Aadhar number"
+                                            {...register("adharNumber", {
+                                                pattern: {
+                                                    value: /^\d{12}$/,
+                                                    message: "Please Enter Valid Adhar Number"
+                                                }
+                                            })}
+                                        />
+                                        {errors.adharNumber && <div className='text-danger small mt-1'>Please Enter Valid Aadhar Number</div>}
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="linked" className="form-label fw-semibold">Adhar Linked with PAN</label>
+                                        <select
+                                            className="form-select"
+                                            id="linked"
+                                            name="linked"
+                                            {...register("linked")}
+                                        >
+                                            <option value="">Select an option</option>
+                                            <option value="no">No</option>
+                                            <option value="yes">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="address" className="form-label fw-semibold">Address</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="address"
+                                            placeholder="Enter address"
+                                            {...register("address")}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Bank Details Section */}
+                                <div className="row g-3 mb-4">
+                                    <div className="col-12 col-md-6">
+                                        <label htmlFor="accountNumber" className="form-label fw-semibold">Bank A/C Number</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="accountNumber"
+                                            name="accountNumber"
+                                            placeholder="Enter account number"
+                                            {...register("accountNumber")}
+                                        />
+                                    </div>
+                                    <div className="col-12 col-md-6">
+                                        <label htmlFor="accountNumberReType" className="form-label fw-semibold">Re-Enter A/C Number</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="accountNumberReType"
+                                            name="accountNumberReType"
+                                            placeholder="Re-enter account number"
+                                            {...register("accountNumberReType")}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="row g-3 mb-4">
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="bankName" className="form-label fw-semibold">Bank Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="bankName"
+                                            placeholder="Enter bank name"
+                                            {...register("bankName")}
+                                        />
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="ifscCode" className="form-label fw-semibold">IFSC Code</label>
+                                        <input
+                                            type="text"
+                                            className="form-control text-uppercase"
+                                            id="ifscCode"
+                                            name="ifscCode"
+                                            placeholder="Enter IFSC code"
+                                            {...register("ifscCode")}
+                                        />
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="branchName" className="form-label fw-semibold">Branch Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="branchName"
+                                            placeholder="Enter branch name"
+                                            {...register("branchName")}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="row g-3 mb-4">
+                                    <div className="col-12 col-md-6">
+                                        <label htmlFor="remark" className="form-label fw-semibold">Remark</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="remark"
+                                            name="remark"
+                                            placeholder="Enter remark (optional)"
+                                            {...register("remark")}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Buttons Section */}
+                                <div className='d-flex justify-content-center gap-3 mt-4 pt-3 border-top'>
+                                    <button type="submit" disabled={startSpneer} className="btn btn-primary px-4 py-2">
+                                        {startSpneer && <output className="spinner-border text-light spinner-border-sm me-2" aria-live="polite"></output>}
+                                        <span>Save</span>
+                                    </button>
+                                    <button type="button" className="btn btn-outline-primary px-4 py-2" onClick={() => { reset() }}>
+                                        Clear
+                                    </button>
+                                    <button type="button" className="btn btn-secondary px-4 py-2" onClick={() => { reset() }}>
+                                        New
+                                    </button>
+                                </div>
+                                {/* Error Messages */}
+                                {postError && (
+                                    <div className="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                                        <i className="fas fa-exclamation-triangle me-2"></i>
+                                        Some Error Occurred! Please try again.
+                                        <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                )}
+                            </form>
                         </div>
                     </div>
-                    {/* second row */}
-                    <div className="form-row g-3">
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="adharNumber">Aadhar Number</label>
-                            <input
-                                type="number"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="adharNumber"
-                                {...register("adharNumber", {
-                                    pattern: {
-                                        value: /^([0-9]{4}[0-9]{4}[0-9]{4}$)|([0-9]{4}\s[0-9]{4}\s[0-9]{4}$)|([0-9]{4}-[0-9]{4}-[0-9]{4}$)/,
-                                        message: "Please Enter Valid Adhar Number"
-                                    }
-                                })}
-                            />
-                            {errors.adharNumber && <p className='text-danger'>Please Enter Valid Aadhar Number</p>}
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="linked">Adhar Linked with PAN</label>
-                            <select
-                                className="form-select form-select-sm border-dark-subtle"
-                                id="linked"
-                                name="linked"
-
-                                {...register("linked")}
-
-                            >
-                                <option value=""></option>
-                                <option value="no">No</option>
-                                <option value="yes">Yes</option>
-
-                            </select>
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="address">Address</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="address"
-                                {...register("address")}
-                            />
-                        </div>
-                    </div>
-                    {/* third row */}
-                    <div className="form-row g-3">
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="accountNumber">Bank A/C Number</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="accountNumber"
-                                name="accountNumber"
-                                {...register("accountNumber")}
-                            />
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="accountNumber">Re-Enter A/C Number</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="accountNumberReType"
-                                name="accountNumberReType"
-                                {...register("accountNumberReType")}
-                            />
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="bankName">Bank Name</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="bankName"
-                                {...register("bankName")}
-                            />
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="ifscCode">IFSC Code</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="ifscCode"
-                                name="ifscCode"
-                                {...register("ifscCode")}
-                            />
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="branchName">Branch Name</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="branchName"
-                                {...register("branchName")}
-                            />
-                        </div>
-                        <div className="form-group col-md-4 px-2">
-                            <label htmlFor="remark">Remark</label>
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-dark-subtle"
-                                id="remark"
-                                name="remark"
-                                {...register("remark")}
-                            />
-                        </div>
-                    </div>
-
-                    <div className='text-center'>
-                        <button type="submit" disabled={startSpneer} className="btn btn-primary ml-3">
-                            {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
-
-                            </div>}
-                            <span>Save</span>
-                        </button>
-                        <button type="button" className="btn btn-outline-primary ml-3" onClick={(e) => { reset() }}>
-                            Clear
-                        </button>
-                        <button type="button" className="btn btn-secondary ml-3" onClick={(e) => { reset() }}>
-                            New
-                        </button>
-                    </div>
-                    {
-                        postError && <div className="alert alert-danger alert-dismissible fade show m-3" role="alert">
-                            Some Error Occurred !!
-                            <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    }
-                    {/* {
-                        isDuplicate && <div className="alert alert-warning fade show m-2" role="alert">
-                            Short Name already exist.
-                        </div>
-                    } */}
-                    {/* {
-                        isSaved && <div className="alert alert-success fade show m-2" role="alert">
-                            Successfully Saved.
-                        </div>
-                    } */}
-                </form>
+                </div>
             </div>
             <Toaster
                 position="bottom-center"

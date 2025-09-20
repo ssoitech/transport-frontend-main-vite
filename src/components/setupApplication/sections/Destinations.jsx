@@ -290,10 +290,6 @@ function Destinations() {
 
     }
 
-    function handleLoadingPointDataEdit(id, loadingPointName) {
-
-    }
-
     function handleLoadingPointDataDelete(id) {
         const isConfirmed = window.confirm("Are you sure to delete ?");
         deleteOneLoadingPointData(isConfirmed, id);
@@ -345,15 +341,15 @@ function Destinations() {
                                                         className="btn btn-sm btn-primary mr-1"
                                                         onClick={(e) => { handleLoadingPointDataAdd(e) }}
                                                     >
-                                                        {startLoadingPointSpinner && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
+                                                        {startLoadingPointSpinner && <output className="spinner-border text-light spinner-border-sm pr-1 mx-1" aria-live="polite">
 
-                                                        </div>}
+                                                        </output>}
                                                         <span>Add</span>
                                                     </button>
                                                     <button
                                                         type="reset"
                                                         form="form1"
-                                                        className="btn btn-sm btn-outline-primary ml-1"
+                                                        className="btn btn-sm btn-outline-primary ml-1 mx-1"
                                                         onClick={() => { setLoadingPointName("") }}
                                                     >
                                                         clear
@@ -376,23 +372,31 @@ function Destinations() {
                                             <th scope="col" className='p-1'>
                                                 Loading Points
                                             </th>
-                                            <th className='p-1' scope="col" colSpan="2">Actions</th>
+                                            <th className='p-1' scope="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="font-weight-normal textColor">
                                         {loadingPointData.map((item, idx) => (
-                                            <tr className="text-center" key={idx}>
+                                            <tr className="text-center" key={item.id}>
                                                 <td className='p-1'>{idx + 1}</td>
                                                 <td className='p-1'>{item.loadingPointName}</td>
-                                                <td className='p-1' data-toggle="modal" data-target="#editModal"><i className="bi bi-pencil-square text-primary custom-cursor-hand" onClick={() => { handleLoadingPointDataEdit(item.id, item.materialName) }}></i></td>
-                                                <td className='p-1'><i className="bi bi-trash text-danger custom-cursor-hand" onClick={() => { handleLoadingPointDataDelete(item.id) }}></i></td>
+                                                <td className='p-1'>
+                                                    <button 
+                                                        type="button" 
+                                                        className="btn btn-link p-0 border-0 bg-transparent"
+                                                        onClick={() => { handleLoadingPointDataDelete(item.id) }}
+                                                        aria-label="Delete loading point"
+                                                    >
+                                                        <i className="bi bi-trash text-danger custom-cursor-hand"></i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))}
 
                                     </tbody>
-                                </table> : <div className="spinner-border text-primary m-5" role="status">
+                                </table> : <output className="spinner-border text-primary m-5" aria-live="polite">
                                     <span className="sr-only">Loading...</span>
-                                </div>
+                                </output>
                                 }
 
                             </div>
@@ -431,13 +435,13 @@ function Destinations() {
                                                     className="btn btn-sm btn-primary mr-1"
                                                     onClick={(e) => { handleUnloadingPointDataAdd(e) }}
                                                 >
-                                                    {startUnloadingPointSpinner && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
+                                                    {startUnloadingPointSpinner && <output className="spinner-border text-light spinner-border-sm pr-1 mx-1" aria-live="polite">
 
-                                                    </div>}
+                                                    </output>}
                                                     Add
                                                 </button>
                                                 <button
-                                                    className="btn btn-sm btn-outline-primary ml-1"
+                                                    className="btn btn-sm btn-outline-primary ml-1 mx-1"
                                                     onClick={() => { setUnloadingPointName("") }}
                                                 >
                                                     clear
@@ -458,23 +462,31 @@ function Destinations() {
                                             <th scope="col" className='p-1'>
                                                 Unloading Points
                                             </th>
-                                            <th className='p-1' scope="col" colSpan="2">Actions</th>
+                                            <th className='p-1' scope="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="font-weight-normal textColor">
                                         {unloadingPointData.map((item, idx) => (
-                                            <tr className="text-center" key={idx}>
+                                            <tr className="text-center" key={item.id}>
                                                 <td className='p-1'>{idx + 1}</td>
                                                 <td className='p-1'>{item.unLoadingPointName}</td>
-                                                <td className='p-1' data-toggle="modal" data-target="#editModal"><i className="bi bi-pencil-square text-primary custom-cursor-hand" onClick={() => { handleLoadingPointDataEdit(item.id, item.materialName) }}></i></td>
-                                                <td className='p-1'><i className="bi bi-trash text-danger custom-cursor-hand" onClick={() => { handleUnloadingPointDataDelete(item.id) }}></i></td>
+                                                <td className='p-1'>
+                                                    <button 
+                                                        type="button" 
+                                                        className="btn btn-link p-0 border-0 bg-transparent"
+                                                        onClick={() => { handleUnloadingPointDataDelete(item.id) }}
+                                                        aria-label="Delete unloading point"
+                                                    >
+                                                        <i className="bi bi-trash text-danger custom-cursor-hand"></i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))}
 
                                     </tbody>
-                                </table> : <div className="spinner-border text-primary m-5" role="status">
+                                </table> : <output className="spinner-border text-primary m-5" aria-live="polite">
                                     <span className="sr-only">Loading...</span>
-                                </div>
+                                </output>
                                 }
                             </div>
                         </div>
