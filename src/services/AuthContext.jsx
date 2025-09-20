@@ -17,6 +17,10 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState(null);
+  const [accessDetails, setAccessDetailsState] = useState(() => {
+    const stored = localStorage.getItem("accessDetails");
+    return stored ? JSON.parse(stored) : null;
+  });
   const navigate = useNavigate();
   const location = useLocation(); // Get the current location (route)
 
@@ -26,9 +30,16 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       setIsAuthenticated(true);
       setUsername(getUsernameFromJwt(token));
+      // Restore accessDetails from localStorage if present
+      const stored = localStorage.getItem("accessDetails");
+      if (stored) {
+        setAccessDetailsState(JSON.parse(stored));
+      }
     } else {
       setIsAuthenticated(false);
       setUsername(null);
+      setAccessDetailsState(null);
+      localStorage.removeItem("accessDetails");
     }
   }, [location]);
 
@@ -50,11 +61,32 @@ export const AuthProvider = ({ children }) => {
     Cookies.remove("token");
     setIsAuthenticated(false);
     setUsername(null);
+    setAccessDetailsState(null);
+    localStorage.removeItem("accessDetails");
     window.location.href = "/login"; // Redirect after logout
   }, []);
 
+  // Custom setter to sync with localStorage
+  const setAccessDetails = (details) => {
+    setAccessDetailsState(details);
+    if (details) {
+      localStorage.setItem("accessDetails", JSON.stringify(details));
+    } else {
+      localStorage.removeItem("accessDetails");
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, username, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        username,
+        login,
+        logout,
+        accessDetails,
+        setAccessDetails,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

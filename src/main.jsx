@@ -2,9 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import App from "./App";
-import { Provider } from "react-redux";
-import { store, persistor } from "./redux/store.js";
-import { PersistGate } from "redux-persist/integration/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Optional: Uncomment if you use global styles
 // import "./index.css";
@@ -30,15 +28,14 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ErrorBoundary>
-          <App />
-        </ErrorBoundary>
-      </PersistGate>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </QueryClientProvider>
   </React.StrictMode>
 );
