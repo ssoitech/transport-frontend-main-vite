@@ -22,8 +22,9 @@ function BankAccountMaster() {
     const handleJoinningDate = (date) => {
         try {
             setDate(format(date, 'yyyy-MM-dd'));
-        } catch (e) {
-
+        } catch {
+            console.error('Error formatting date');
+            setDate(null);
         }
     }
 
@@ -54,7 +55,7 @@ function BankAccountMaster() {
             navigate('/work-space');
         }
 
-    }, []);
+    }, [accessDetails, navigate]);
 
 
     async function getData() {
@@ -82,10 +83,6 @@ function BankAccountMaster() {
                     setIsSaved(true);
                     setUpdateData(true);
                     setStartSpneer(false);
-
-                } else if (response.data === "duplicate") {
-                    setStartSpneer(false);
-                    setPostError(true);
                 } else {
                     setStartSpneer(false);
                     setPostError(true);
@@ -208,30 +205,28 @@ function BankAccountMaster() {
                 <span className='mb-0 h6'>Bank Account Master</span>
             </div>
             <div className='row'>
-
-                {/*   <!-- Area Chart --> */}
-                <div className="col-xl-4 col-lg-3 mx-auto">
+                {/*   <!-- Form Section --> */}
+                <div className="col-xl-5 col-lg-5 col-md-6">
                     <div className="card shadow mb-4">
                         {/*  <!-- Card Body --> */}
-                        <div className="card-body font-weight-bold text-dark">
+                        <div className="card-body font-weight-bold text-dark p-4">
                             <form className='justify-content-around' id="form1">
-                                <div className="form-group">
-                                    <p htmlFor="joiningDate">Joining Date</p>
-
+                                <div className="form-group mb-3">
+                                    <label htmlFor="joiningDate" className="form-label">Joining Date</label>
                                     <DatePicker
-                                        className="date-picker-input pl-2 w-200"
+                                        className="form-control form-control-sm border-dark-subtle mx-2"
                                         selected={date}
                                         onChange={handleJoinningDate}
                                         name="joiningDate"
                                         dateFormat="d-MMM-yyyy"
                                         placeholderText="Select a date"
                                         id="joiningDate"
+                                        // width="100%"
                                     />
-
                                 </div>
 
-                                <div className="form-group">
-                                    <label htmlFor="bankName">Bank Name</label>
+                                <div className="form-group mb-3">
+                                    <label htmlFor="bankName" className="form-label">Bank Name</label>
                                     <input
                                         type="text"
                                         className="form-control form-control-sm border-dark-subtle"
@@ -240,10 +235,10 @@ function BankAccountMaster() {
                                         required
                                     />
                                     {fnameIsEmpty && <div className="text-sm text-danger font-weight-normal">Bank Name should not be Empty!!</div>}
-
                                 </div>
-                                <div className="form-group">
-                                    <label htmlFor="accNo">Account Number</label>
+
+                                <div className="form-group mb-3">
+                                    <label htmlFor="accNo" className="form-label">Account Number</label>
                                     <input
                                         type="text"
                                         className="form-control form-control-sm border-dark-subtle"
@@ -254,44 +249,43 @@ function BankAccountMaster() {
                                     {snameIsEmpty && <div className="text-sm text-danger font-weight-normal">Account No. should not be Empty!!</div>}
                                 </div>
 
-                                <div id="buttons" className="btn-div">
+                                <div className="d-flex gap-2 justify-content-center mt-4">
+                                    <button type="submit" form="form1" className="btn btn-sm btn-primary px-4" onClick={(e) => { handleSave(e) }}>
+                                        {startSpneer && <output className="spinner-border text-light spinner-border-sm me-2" aria-live="polite">
 
-                                    <button type="submit" form="form1" className="btn btn-sm btn-primary m-1" onClick={(e) => { handleSave(e) }}>
-                                        {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
-
-                                        </div>}
+                                        </output>}
                                         Save
                                     </button>
 
-                                    <button type="reset" className="btn btn-outline-primary btn-sm m-1" onClick={handleClear}>
+                                    <button type="reset" className="btn btn-outline-primary btn-sm px-4" onClick={handleClear}>
                                         Clear
                                     </button>
                                 </div>
                             </form>
-                            {
-                                postError && <div className="alert alert-danger alert-dismissible fade show m-2" role="alert">
-                                    Some Error Occurred !!
+                            {postError && (
+                                <div className="alert alert-danger alert-dismissible fade show m-2" role="alert">
+                                    <span>Some Error Occurred !!</span>
                                     <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                            }
-                            {
-                                isDuplicate && <div className="alert alert-warning fade show m-2" role="alert">
+                            )}
+                            {isDuplicate && (
+                                <div className="alert alert-warning fade show m-2" role="alert">
                                     Short Name already exist.
                                 </div>
-                            }
-                            {
-                                isSaved && <div className="alert alert-success fade show m-2" role="alert">
+                            )}
+                            {isSaved && (
+                                <div className="alert alert-success fade show m-2" role="alert">
                                     Successfully Saved.
                                 </div>
-                            }
+                            )}
                         </div>
                     </div>
                 </div>
 
-                {/*  <!-- Pie Chart --> */}
-                <div className="col mx-auto">
+                {/*  <!-- Table Section --> */}
+                <div className="col-xl-7 col-lg-7 col-md-6">
                     <div className="card shadow mb-4">
                         {/*  <!-- Card Header - Dropdown --> */}
                         <div
@@ -314,13 +308,31 @@ function BankAccountMaster() {
                                     </thead>
                                     <tbody>
                                         {ownerData.map((data, idx) => (
-                                            <tr key={idx}>
+                                            <tr key={data.id}>
                                                 <td className='text-center'>{idx + 1}</td>
                                                 <td className=''>{data.bankName}</td>
                                                 <td className=''>{data.accNo}</td>
                                                 <td className=''>{data.joiningDate}</td>
-                                                <td className='text-center' data-toggle="modal" data-target="#editModal" onClick={() => { handleEdit(data.id, data.name, data.communication, data.shortName) }}><i className="bi bi-pencil-square text-info bg-white p-1 rounded custom-cursor-hand"></i></td>
-                                                <td className='text-center'><i className="bi bi-trash text-danger bg-white p-1 rounded custom-cursor-hand" onClick={() => { handleDelete(data.id) }}></i></td>
+                                                <td className='text-center' data-toggle="modal" data-target="#editModal">
+                                                    <button 
+                                                        type="button" 
+                                                        className="btn btn-link p-0 border-0 bg-transparent"
+                                                        onClick={() => { handleEdit(data.id, data.name, data.communication, data.shortName) }}
+                                                        aria-label="Edit bank account"
+                                                    >
+                                                        <i className="bi bi-pencil-square text-info bg-white p-1 rounded custom-cursor-hand"></i>
+                                                    </button>
+                                                </td>
+                                                <td className='text-center'>
+                                                    <button 
+                                                        type="button" 
+                                                        className="btn btn-link p-0 border-0 bg-transparent"
+                                                        onClick={() => { handleDelete(data.id) }}
+                                                        aria-label="Delete bank account"
+                                                    >
+                                                        <i className="bi bi-trash text-danger bg-white p-1 rounded custom-cursor-hand"></i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))}
 
@@ -328,9 +340,9 @@ function BankAccountMaster() {
                                 </table>
 
                             </div>
-                            : <div className="spinner-border text-primary m-5" role="status">
+                            : <output className="spinner-border text-primary m-5" aria-live="polite">
                                 <span className="sr-only">Loading...</span>
-                            </div>
+                            </output>
                         }
 
                     </div>

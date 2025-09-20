@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { BaseUrl } from '../../../services/BaseURI';
-import axios from 'axios';
 import axiosInstance from '../../../config/AxiosConfig';
 
 function EditTruckOwner() {
@@ -220,294 +219,272 @@ function EditTruckOwner() {
 
 
   return (
-    <div className='card overflow-auto'>
-      <div className='card-body'>
-        <form id="form">
-
-          <div className="form-row">
-            <div className="form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
-              </div>
-              <input
-                type="text"
-                className="form-control"
-                id="inputEmail4"
-                aria-describedby="inputGroup-sizing-sm"
-                value={ownerData ? ownerData.name : name}
-                onChange={(e) => { setName(e.target.value) }}
-              />
-              {isNameEmpty && <p className='text-danger'>Name Should Not be Empty</p>}
-            </div>
-            <div className="form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Contact</span>
-              </div>
-              <input
-                type="number"
-                className="form-control"
-                id="inputPassword4"
-                value={ownerData ? ownerData.contactNumber : contact}
-                onChange={(e) => { setContact(e.target.value) }}
-              />
-            </div>
-            <div className="form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-sm">PAN</span>
-              </div>
-              <input
-                type="text"
-                className="form-control"
-                id="inputPassword4"
-                value={ownerData ? ownerData.panNumber : pan}
-                onChange={(e) => { setPan(e.target.value) }}
-              />
-              {isPanInValid && <p className='text-danger'>Please Enter Valid PAN Number</p>}
-            </div>
-            <div className="form-group col-md-3">
-              <button className="btn btn-sm btn-primary" onClick={(e) => { handleFind(e) }}>
-                {/* {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
-
-                </div>} */}
-                <span>Find</span>
-              </button>
-            </div>
-          </div>
-          {/* second row */}
-          <div className="form-row">
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Aadhar</span>
-              </div>
-              <input
-                type="text"
-                className="form-control"
-                id="inputEmail4"
-                value={ownerData ? ownerData.adharNumber : adhar}
-                onChange={(e) => { setAdhar(e.target.value) }}
-              />
-              {isAdharInValid && <p className='text-danger'>Please Enter Valid Aadhar Number</p>}
-            </div>
-            <div className="form-group col-md-3 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Adhar Linked with PAN</span>
-              </div>
-
-              <select
-                class="form-select"
-                id="floatingSelect"
-                aria-label="Floating label select example"
-                value={ownerData ? ownerData.panAdharLinkStatus : isAdharLinkedWithPan}
-                onChange={(e) => { setIsAdharLinkedWithPan(e.target.value) }}
-
-              >
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-
-              </select>
-            </div>
-            <div className="form-group col-md-5 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">Address</span>
-              </div>
-
-              <input
-                type="text"
-                className="form-control"
-                id="inputPassword4"
-                value={ownerData ? ownerData.address : address}
-                onChange={(e) => { setAddress(e.target.value) }}
-              />
-            </div>
-          </div>
-          {/* third row */}
-          <div className="form-row">
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">Bank A/C Number</span>
-              </div>
-              <input
-                type="text"
-                className="form-control"
-                id="inputEmail4"
-                value={ownerData ? ownerData.bankAcNo : bankAcNo}
-                onChange={(e) => { setBankAcNo(e.target.value) }}
-              />
-            </div>
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">Bank Name</span>
-              </div>
-
-              <input
-                type="text"
-                className="form-control"
-                id="inputEmail4"
-                value={ownerData ? ownerData.bankName : bankName}
-                onChange={(e) => { setBankName(e.target.value) }}
-              />
-            </div>
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">IFSC Code</span>
-              </div>
-
-              <input
-                type="text"
-                className="form-control"
-                id="inputPassword4"
-                value={ownerData ? ownerData.ifscCode : ifscCode}
-                onChange={(e) => { setIfscCode(e.target.value) }}
-              />
-            </div>
-          </div>
-          {/* fourth row */}
-          <div className="form-row">
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">Branch Name</span>
-              </div>
-
-              <input
-                type="text"
-                className="form-control"
-                id="inputEmail4"
-                value={ownerData ? ownerData.branchName : branch}
-                onChange={(e) => { setBranch(e.target.value) }}
-              />
-            </div>
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">Owner Type</span>
-              </div>
-
-              <select
-                className="form-select"
-                id="floatingSelect"
-                aria-label="Floating label select example"
-                value={ownerData ? ownerData.ownerType : ownerType}
-                onChange={(e) => { setOwnerType(e.target.value) }}
-              >
-                <option value="actual">Actual</option>
-                <option value="lease">Lease</option>
-
-              </select>
-            </div>
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">Remark</span>
-              </div>
-              <input
-                type="text"
-                className="form-control"
-                id="inputEmail4"
-                value={ownerData ? ownerData.remark : remark}
-                onChange={(e) => { setRemark(e.target.value) }}
-              />
-            </div>
-
-
-          </div>
-          {/* fifth row */}
-          <div className="form-row">
-            {/* <div className="form-group col-md-4">
-              <div className='row'>
-                <div class="input-group-prepend col">
-                  <span class="input-group-text" id="inputPassword4">TDS Declaration Submitted</span>
+    <div className='container-fluid'>
+      <div className='row justify-content-center'>
+        <div className='col-12 col-xl-11'>
+          <div className='card shadow-sm border-0'>
+            <div className='card-body p-4'>
+              <h5 className="card-title mb-4 text-primary fw-bold">Edit Truck Owner Details</h5>
+              
+              <form id="form">
+                {/* Search Section */}
+                <div className="row g-3 mb-4">
+                  <div className="col-12">
+                    <h6 className="text-secondary fw-semibold mb-3 border-bottom pb-2">Search Owner</h6>
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Owner Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={ownerData ? ownerData.name : name}
+                      onChange={(e) => { setName(e.target.value) }}
+                      placeholder="Enter owner name"
+                    />
+                    {isNameEmpty && <div className='text-danger small mt-1'>Name Should Not be Empty</div>}
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Contact Number</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={ownerData ? ownerData.contactNumber : contact}
+                      onChange={(e) => { setContact(e.target.value) }}
+                      placeholder="Enter contact number"
+                    />
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">PAN Number</label>
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        className="form-control text-uppercase"
+                        value={ownerData ? ownerData.panNumber : pan}
+                        onChange={(e) => { setPan(e.target.value) }}
+                        placeholder="Enter PAN number"
+                        style={{ textTransform: 'uppercase' }}
+                      />
+                      <button className="btn btn-primary" type="button" onClick={(e) => { handleFind(e) }}>
+                        <i className="bi bi-search"></i>
+                      </button>
+                    </div>
+                    {isPanInValid && <div className='text-danger small mt-1'>Please Enter Valid PAN Number</div>}
+                  </div>
                 </div>
 
-
-                <div className="form-check form-check-inline col">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="inlineRadioOptions"
-                    id="radio1"
-                    value="yes"
-                    checked={ownerData ? ownerData.tdsStatus === "yes" ? true : false : true}
-                    onClick={(e) => { setTdsStatus(e.target.value) }}
-                  />
-                  <label className="form-check-label" for="radio1">yes</label>
+                {/* Personal Information Section */}
+                <div className="row g-3 mb-4">
+                  <div className="col-12">
+                    <h6 className="text-secondary fw-semibold mb-3 border-bottom pb-2">Personal Information</h6>
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Aadhar Number</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={ownerData ? ownerData.adharNumber : adhar}
+                      onChange={(e) => { setAdhar(e.target.value) }}
+                      placeholder="Enter Aadhar number"
+                      disabled={fieldIsDisabled}
+                    />
+                    {isAdharInValid && <div className='text-danger small mt-1'>Please Enter Valid Aadhar Number</div>}
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Adhar Linked with PAN</label>
+                    <select 
+                      className="form-select"
+                      value={ownerData ? ownerData.panAdharLinkStatus : isAdharLinkedWithPan}
+                      onChange={(e) => { setIsAdharLinkedWithPan(e.target.value) }}
+                      disabled={fieldIsDisabled}
+                    >
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Address</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={ownerData ? ownerData.address : address}
+                      onChange={(e) => { setAddress(e.target.value) }}
+                      placeholder="Enter address"
+                      disabled={fieldIsDisabled}
+                    />
+                  </div>
                 </div>
-                <div className="col form-check form-check-inline pt-2">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="inlineRadioOptions"
-                    id="radio2"
-                    value="no"
-                    checked={ownerData ? ownerData.tdsStatus === "no" ? true : false : false}
-                    onClick={(e) => { setTdsStatus(e.target.value) }}
-                  />
-                  <label className="form-check-label" for="radio2">No</label>
+
+                {/* Bank Information Section */}
+                <div className="row g-3 mb-4">
+                  <div className="col-12">
+                    <h6 className="text-secondary fw-semibold mb-3 border-bottom pb-2">Bank Information</h6>
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Bank A/C Number</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={ownerData ? ownerData.bankAccountNumber : bankAcNo}
+                      onChange={(e) => { setBankAcNo(e.target.value) }}
+                      placeholder="Enter account number"
+                      disabled={fieldIsDisabled}
+                    />
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Bank Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={ownerData ? ownerData.bankName : bankName}
+                      onChange={(e) => { setBankName(e.target.value) }}
+                      placeholder="Enter bank name"
+                      disabled={fieldIsDisabled}
+                    />
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">IFSC Code</label>
+                    <input
+                      type="text"
+                      className="form-control text-uppercase"
+                      value={ownerData ? ownerData.ifscCode : ifscCode}
+                      onChange={(e) => { setIfscCode(e.target.value) }}
+                      placeholder="Enter IFSC code"
+                      disabled={fieldIsDisabled}
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Branch Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={ownerData ? ownerData.branchName : branch}
+                      onChange={(e) => { setBranch(e.target.value) }}
+                      placeholder="Enter branch name"
+                      disabled={fieldIsDisabled}
+                    />
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Remark</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={ownerData ? ownerData.remark : remark}
+                      onChange={(e) => { setRemark(e.target.value) }}
+                      placeholder="Enter remark"
+                      disabled={fieldIsDisabled}
+                    />
+                  </div>
                 </div>
 
-              </div>
-            </div> */}
+                {/* Additional Information Section */}
+                <div className="row g-3 mb-4">
+                  <div className="col-12">
+                    <h6 className="text-secondary fw-semibold mb-3 border-bottom pb-2">Additional Information</h6>
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Owner Type</label>
+                    <select 
+                      className="form-select"
+                      value={ownerData ? ownerData.ownerType : ownerType}
+                      onChange={(e) => { setOwnerType(e.target.value) }}
+                      disabled={fieldIsDisabled}
+                    >
+                      <option value="actual">Actual</option>
+                      <option value="lease">Lease</option>
+                    </select>
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">TDS Status</label>
+                    <select 
+                      className="form-select"
+                      value={ownerData ? ownerData.tdsStatus : tdsStatus}
+                      onChange={(e) => { setTdsStatus(e.target.value) }}
+                      disabled={fieldIsDisabled}
+                    >
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Submission Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={ownerData ? ownerData.tdsSubmissionDate : submissionDate}
+                      disabled={fieldIsDisabled}
+                      onChange={(e) => { setSubmissionDate(e.target.value) }}
+                    />
+                  </div>
+                  
+                  <div className="col-12 col-md-6 col-lg-4">
+                    <label className="form-label fw-semibold">Doc Ref No.</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Doc Ref No"
+                      value={ownerData ? ownerData.docRefNo : docRefNo}
+                      disabled={fieldIsDisabled}
+                      onChange={(e) => { setDocRefNo(e.target.value) }}
+                    />
+                  </div>
+                </div>
 
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">Submission Date</span>
-              </div>
+                {/* Action Buttons */}
+                <div className="row">
+                  <div className="col-12">
+                    <button
+                      type="submit"
+                      className="btn btn-primary me-2"
+                      onClick={(e) => { handleSubmit(e) }}
+                      disabled={startSpneer}
+                    >
+                      {startSpneer && <span className="spinner-border spinner-border-sm me-2" role="status"></span>}
+                      Save Changes
+                    </button>
+                    <button type="button" className="btn btn-outline-secondary">
+                      Clear
+                    </button>
+                  </div>
+                </div>
 
-              <input
-                type="date"
-                className="form-control"
-                id="inputEmail4"
-                value={ownerData ? ownerData.tdsSubmissionDate : submissionDate}
-                disabled={fieldIsDisabled}
-                onChange={(e) => { setSubmissionDate(e.target.value) }}
-              />
+                {/* Status Messages */}
+                {postError && (
+                  <div className="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                    Some Error Occurred!
+                    <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                )}
+                
+                {isSaved && (
+                  <div className="alert alert-success fade show mt-3" role="alert">
+                    <i className="bi bi-check-circle-fill me-2"></i>
+                    Owner details successfully saved!
+                  </div>
+                )}
+                </form>
+              </div>
             </div>
-            <div className="form-group col-md-4 form-group col-md-3 input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="inputPassword4">Doc Ref No.</span>
-              </div>
-
-              <input
-                type="text"
-                className="form-control"
-                id="inputPassword4"
-                placeholder="Enter Doc Ref No"
-                value={ownerData ? ownerData.docRefNo : docRefNo}
-                disabled={fieldIsDisabled}
-                onChange={(e) => { setDocRefNo(e.target.value) }}
-              />
-            </div>
-
           </div>
-
-          <button type="submit" className="btn btn-primary m-2" onClick={(e) => { handleSubmit(e) }}>
-            {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
-
-            </div>}
-            <span>Save</span>
-          </button>
-          <button type="submit" className="btn btn-outline-primary">
-            Clear
-          </button>
-          {
-            postError && <div className="alert alert-danger alert-dismissible fade show m-2" role="alert">
-              Some Error Occurred !!
-              <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-          }
-          {/* {
-                        isDuplicate && <div className="alert alert-warning fade show m-2" role="alert">
-                            Short Name already exist.
-                        </div>
-                    } */}
-          {
-            isSaved && <div className="alert alert-success fade show m-2" role="alert">
-              Successfully Saved.
-            </div>
-          }
-        </form>
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
 export default EditTruckOwner;

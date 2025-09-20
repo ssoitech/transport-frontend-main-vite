@@ -1,11 +1,11 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import './newNavBar.css';
 import { AuthContext } from '../services/AuthContext';
 import { NavLink } from 'react-router-dom';
 
 
 function NewNavBar() {
-    const { isAuthenticated, username, logout } = useContext(AuthContext);
+    const { isAuthenticated, username } = useContext(AuthContext);
 
 
 
@@ -73,7 +73,7 @@ function NewNavBar() {
                             </a> */}
                         </li>
                     </ul>
-                    <form className="d-flex" role="search">
+                    {/* <form className="d-flex" role="search">
                         <input
                             className="form-control form-control-sm me-2"
                             type="search"
@@ -83,7 +83,7 @@ function NewNavBar() {
                         <button className="btn btn-sm btn-outline-primary" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
-                    </form>
+                    </form> */}
 
 
                     {/* <!-- Nav Item - User Information --> */}

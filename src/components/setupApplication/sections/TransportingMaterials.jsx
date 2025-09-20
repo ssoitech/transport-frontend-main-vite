@@ -58,12 +58,23 @@ function TransportingMaterials() {
                 // handle error
                 console.log(error.response);
                 if (error.response.data === "duplicate" && error.response.status === 409) {
-                    // setIsDuplicate(true);
-                    setStartSpneer(false);
+                    toast.error('Material already exists!', {
+                        position: "bottom-center",
+                        style: {
+                            background: "red",
+                            color: "#fff",
+                        }
+                    });
                 } else {
-                    setStartSpneer(false);
+                    toast.error('Failed to add material!', {
+                        position: "bottom-center",
+                        style: {
+                            background: "red",
+                            color: "#fff",
+                        }
+                    });
                 }
-
+                setStartSpneer(false);
             });
     }
 
@@ -136,7 +147,7 @@ function TransportingMaterials() {
                     });
                 }
             })
-            .catch(function (error) {
+            .catch(function () {
                 // handle error
                 Swal.fire({
                     title: "Some Error Occures!!",
@@ -201,15 +212,15 @@ function TransportingMaterials() {
                                             className="btn btn-sm btn-primary mr-1"
                                             onClick={(e) => { handleAdd(e) }}
                                         >
-                                            {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
+                                            {startSpneer && <output className="spinner-border text-light spinner-border-sm pr-1 mx-1" aria-live="polite">
 
-                                            </div>}
+                                            </output>}
                                             Add
                                         </button>
                                         <button
                                             type="submit"
                                             form="form1"
-                                            className="btn btn-sm btn-outline-primary ml-1"
+                                            className="btn btn-sm btn-outline-primary mx-1"
                                         // onClick={(e) => { handleSave(e) }}
                                         >
                                             clear
@@ -239,18 +250,36 @@ function TransportingMaterials() {
                             </thead>
                             <tbody className="font-weight-normal textColor">
                                 {materialData.map((item, idx) => (
-                                    <tr className="text-center" key={idx}>
+                                    <tr className="text-center" key={item.id}>
                                         <td className='p-1'>{idx + 1}</td>
                                         <td className='p-1'>{item.materialName}</td>
-                                        <td className='p-1' data-toggle="modal" data-target="#editModal"><i className="bi bi-pencil-square text-primary custom-cursor-hand" onClick={() => { handleEdit(item.id, item.materialName) }}></i></td>
-                                        <td className='p-1'><i className="bi bi-trash text-danger custom-cursor-hand" onClick={() => { handleDelete(item.id) }}></i></td>
+                                        <td className='p-1' data-toggle="modal" data-target="#editModal">
+                                            <button 
+                                                type="button" 
+                                                className="btn btn-link p-0 border-0 bg-transparent"
+                                                onClick={() => { handleEdit(item.id, item.materialName) }}
+                                                aria-label="Edit material"
+                                            >
+                                                <i className="bi bi-pencil-square text-primary custom-cursor-hand"></i>
+                                            </button>
+                                        </td>
+                                        <td className='p-1'>
+                                            <button 
+                                                type="button" 
+                                                className="btn btn-link p-0 border-0 bg-transparent"
+                                                onClick={() => { handleDelete(item.id) }}
+                                                aria-label="Delete material"
+                                            >
+                                                <i className="bi bi-trash text-danger custom-cursor-hand"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
 
                             </tbody>
-                        </table> : <div className="spinner-border text-primary m-5" role="status">
+                        </table> : <output className="spinner-border text-primary m-5" aria-live="polite">
                             <span className="sr-only">Loading...</span>
-                        </div>
+                        </output>
                         }
                     </div>
                 </div>

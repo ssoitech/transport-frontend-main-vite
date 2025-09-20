@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { toast, Toaster } from 'react-hot-toast';
-import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { BaseUrl } from '../../../services/BaseURI';
 import axiosInstance from '../../../config/AxiosConfig';
 
 function ChallanCollectionCenter() {
     const [centreNames, setCentreNames] = useState([]);
     const [startSpneer, setStartSpneer] = useState(false);
     const [updated, setUpdated] = useState(false);
-    const { getValues, setValue, watch, register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset } = useForm();
 
     async function getData() {
         await axiosInstance.get('/api/v1/get/all/challan-collection-centers')
@@ -30,7 +28,7 @@ function ChallanCollectionCenter() {
             getData();
         }
 
-    }, [updated]);
+    }, [updated, reset]);
 
     useEffect(() => {
         getData();
@@ -82,7 +80,7 @@ function ChallanCollectionCenter() {
         }
         try {
             await postData(fdata);
-        } catch (error) {
+        } catch {
             setStartSpneer(false);
         }
 
@@ -123,7 +121,7 @@ function ChallanCollectionCenter() {
                                             form="collectionCenterForm"
                                             className="btn btn-sm btn-primary mr-1"
                                         >
-                                            {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1" role="status">
+                                            {startSpneer && <div className="spinner-border text-light spinner-border-sm pr-1 mx-1" role="status">
 
                                             </div>}
                                             Add
@@ -131,7 +129,7 @@ function ChallanCollectionCenter() {
                                         <button
                                             type="button"
                                             form="collectionCenterForm"
-                                            className="btn btn-sm btn-outline-primary ml-1"
+                                            className="btn btn-sm btn-outline-primary ml-1 mx-1"
                                         // onClick={(e) => { handleSave(e) }}
                                         >
                                             clear

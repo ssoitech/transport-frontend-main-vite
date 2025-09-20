@@ -13,28 +13,6 @@ function TdsDeclarationData() {
     const [searchedOwnerData, setSearchedOwnerData] = useState();
     const [ownerData, setOwnerData] = useState();
     const [searchByNameLoader, setSearchByNameLoader] = useState(false);
-
-
-    const [fname, setFname] = useState("");
-    const [sname, setSname] = useState("");
-    const [phNo, setPhNo] = useState("");
-    const [address1, setAddress1] = useState("");
-    const [address2, setAddress2] = useState("");
-    const [address3, setAddress3] = useState("");
-    const [startSpneer, setStartSpneer] = useState(false);
-
-    const [postError, setPostError] = useState(false);
-    const [displayModal, setDisplayModal] = useState(false);
-    const [fnameIsEmpty, setFnameIsEmpty] = useState(false);
-    const [snameIsEmpty, setSnameIsEmpty] = useState(false);
-    const [updateData, setUpdateData] = useState(false); // used in useEffect as a dependency to update the table.
-    const [editData, setEditData] = useState(null);
-    const [isDuplicate, setIsDuplicate] = useState(false);
-    const [isSaved, setIsSaved] = useState(false);
-
-    const [tdsValue, setTdsValue] = useState("yes");
-
-    const [loading, setLoading] = useState(false);
     const [startSpinner, setStartSpinner] = useState(false);
 
     const { register, handleSubmit, setValue, watch } = useForm();
@@ -59,7 +37,7 @@ function TdsDeclarationData() {
             navigate('/work-space');
         }
 
-    }, []);
+    }, [accessDetails, navigate]);
 
 
     const handleFindByName = async () => {
@@ -116,7 +94,7 @@ function TdsDeclarationData() {
         setValue("pan", ownerData.panNumber || "");
 
 
-    }, [ownerData]);
+    }, [ownerData, setValue]);
 
     // Handle Form Submission
     const onSubmit = (formData) => {
@@ -142,7 +120,7 @@ function TdsDeclarationData() {
                     confirmButtonText: "OK",
                 });
             })
-            .catch(error => {
+            .catch(() => {
                 Swal.fire({
                     icon: "error",
                     text: "Some Error Occures!",
@@ -163,180 +141,189 @@ function TdsDeclarationData() {
             </div>
 
             <div className='row'>
-                {/*   <!-- Area Chart --> */}
-                <div className="mx-auto">
+                {/*   <!-- TDS Form Section --> */}
+                <div className="col-12">
                     <div className="card mb-4">
                         {/*  <!-- Card Body --> */}
                         <div className="card-body">
-
-                            <div className="container">
-                                <div className="row">
-                                    {/* First Label, Input, and Search Button */}
-                                    <div className="col-12 col-md-4 mb-2">
-                                        <label htmlFor="ownerName" className="form-label">
+                            {/* Search Section */}
+                            <div className="container-fluid">
+                                <div className="row g-3 align-items-end">
+                                    {/* Owner Name Search */}
+                                    <div className="col-12 col-md-4">
+                                        <label htmlFor="ownerName" className="form-label fw-bold">
                                             Owner Name
                                         </label>
-                                        <div className="d-flex">
-                                            <AutoComplete
-                                                placeholder={"Search here"}
-                                                url={'/api/v1/challan-holder/get/all/names-ids?keyword='}
-                                                datakey={"name"}
-                                                customLoading={<>Loading..</>}
-                                                onSelect={(res) => setSearchedOwnerData(res)}
-                                                onChange={(input) => { }}
-                                                onBlur={(e) => { }}
-                                                onFocus={(e) => { }}
-                                                customStyles={{}}
-                                            />
-
-                                        </div>
+                                        <AutoComplete
+                                            placeholder={"Search here"}
+                                            url={'/api/v1/challan-holder/get/all/names-ids?keyword='}
+                                            datakey={"name"}
+                                            customLoading={<>Loading..</>}
+                                            onSelect={(res) => setSearchedOwnerData(res)}
+                                            onChange={() => { }}
+                                            onBlur={() => { }}
+                                            onFocus={() => { }}
+                                            customStyles={{}}
+                                        />
                                     </div>
 
-                                    {/* Second Label, Input, and Search Button */}
-                                    <div className="col-12 col-md-6 mb-2">
-                                        <label htmlFor="panNumber" className="form-label">
+                                    {/* PAN Number Search */}
+                                    <div className="col-12 col-md-6">
+                                        <label htmlFor="panNumber" className="form-label fw-bold">
                                             PAN Number
                                         </label>
-                                        <div className="d-flex">
+                                        <div className="d-flex gap-2">
                                             <AutoComplete
                                                 placeholder={"Search here"}
                                                 url={'/api/v1/challan-holder/get/all/pan-no-ids?keyword='}
                                                 datakey={"name"}
                                                 customLoading={<>Loading..</>}
                                                 onSelect={(res) => setSearchedOwnerData(res)}
-                                                onChange={(input) => { }}
-                                                onBlur={(e) => { }}
-                                                onFocus={(e) => { }}
+                                                onChange={() => { }}
+                                                onBlur={() => { }}
+                                                onFocus={() => { }}
                                                 customStyles={{}}
                                             />
-                                            <button type="button" className="btn btn-sm btn-success ml-4" disabled={searchByNameLoader} onClick={handleFindByName}>
+                                            <button 
+                                                type="button" 
+                                                className="btn btn-success px-4" 
+                                                disabled={searchByNameLoader} 
+                                                onClick={handleFindByName}
+                                            >
                                                 {searchByNameLoader ? (
                                                     <>
-                                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                        Loading ...
+                                                        <output className="spinner-border spinner-border-sm me-2" aria-live="polite"></output>
+                                                        Loading
                                                     </>
                                                 ) : (
                                                     'Find'
                                                 )}
                                             </button>
-                                            {/* <button className="btn btn-sm btn-primary ml-2" type="button" onClick={handleFindByName}>
-                                                Find
-                                            </button> */}
                                         </div>
                                     </div>
                                 </div>
+                                <hr className="my-4" />
                             </div>
-
-                            <hr />
 
                         </div>
 
-                        {/* second card */}
-
-                        <div className='card-body'>
-
-                            <form
-                                onSubmit={handleSubmit(onSubmit)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                        e.preventDefault();
-                                    }
-                                }}
-                            >
-                                <div className="card-body">
-                                    <div className="row">
-                                        <div className="col">
-                                            <div className="form-group">
-                                                <p>TDS Declaration Submitted</p>
-                                                <div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input
-                                                            className="form-check-input"
-                                                            type="radio"
-                                                            name="tdsStatus"
-                                                            value="yes"
-                                                            {...register("tdsStatus")}
-                                                        />
-                                                        <label className="form-check-label">Yes</label>
-                                                    </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input
-                                                            className="form-check-input"
-                                                            type="radio"
-                                                            name="tdsStatus"
-                                                            value="no"
-                                                            {...register("tdsStatus")}
-                                                        />
-                                                        <label className="form-check-label">No</label>
-                                                    </div>
+                        {/* Form Section */}
+                        <div className='card-body pt-0'>
+                            <form onSubmit={handleSubmit(onSubmit)}>
+                                <div className="row">
+                                    {/* Left Column - TDS Declaration Form */}
+                                    <div className="col-12 col-lg-6">
+                                        <div className="mb-4">
+                                            <div className="form-label fw-bold">TDS Declaration Submitted</div>
+                                            <div className="d-flex gap-3 mt-2">
+                                                <div className="form-check">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="tdsStatus"
+                                                        value="yes"
+                                                        id="tdsYes"
+                                                        {...register("tdsStatus")}
+                                                    />
+                                                    <label className="form-check-label fw-bold text-white bg-primary px-3 py-1 rounded" htmlFor="tdsYes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div className="form-check">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="tdsStatus"
+                                                        value="no"
+                                                        id="tdsNo"
+                                                        {...register("tdsStatus")}
+                                                    />
+                                                    <label className="form-check-label fw-bold text-white bg-primary px-3 py-1 rounded" htmlFor="tdsNo">
+                                                        No
+                                                    </label>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div className="row">
-                                                <div className="form-group col-md-6">
-                                                    <label>Submission Date</label>
-                                                    <input
-                                                        type="date"
-                                                        className="form-control"
-                                                        {...register("submissionDate")}
-                                                        disabled={tdsStatus === "no"} // Disable if "No" is selected
-                                                    />
+                                        <div className="row g-3">
+                                            <div className="col-12 col-md-6">
+                                                <div className="form-label fw-bold text-white bg-primary px-3 py-1 rounded d-inline-block">
+                                                    Submission Date
                                                 </div>
-                                                <div className="form-group col-md-6">
-                                                    <label>Doc Ref No.</label>
+                                                <input
+                                                    type="date"
+                                                    className="form-control mt-2"
+                                                    placeholder="dd-mm-yyyy"
+                                                    {...register("submissionDate")}
+                                                    disabled={tdsStatus === "no"}
+                                                />
+                                            </div>
+                                            <div className="col-12 col-md-6">
+                                                <div className="form-label fw-bold text-white bg-primary px-3 py-1 rounded d-inline-block">
+                                                    Doc Ref No.
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    className="form-control mt-2"
+                                                    placeholder="Enter Doc Ref No"
+                                                    {...register("docRefNo")}
+                                                    disabled={tdsStatus === "no"}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Column - Owner Details */}
+                                    <div className="col-12 col-lg-6">
+                                        <div className="row g-2">
+                                            <div className="col-12">
+                                                <div className="input-group">
+                                                    <span className="input-group-text fw-bold">Name</span>
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        placeholder="Enter Doc Ref No"
-                                                        {...register("docRefNo")}
-                                                        disabled={tdsStatus === "no"}
+                                                        readOnly
+                                                        {...register("name")}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-12">
+                                                <div className="input-group">
+                                                    <span className="input-group-text fw-bold">Contact</span>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        readOnly
+                                                        {...register("contact")}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-12">
+                                                <div className="input-group">
+                                                    <span className="input-group-text fw-bold">PAN</span>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        readOnly
+                                                        {...register("pan")}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div className="col">
-                                            <div className="input-group input-group-sm m-1">
-                                                <span className="input-group-text">Name</span>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    {...register("name")}
-                                                />
-                                            </div>
-
-                                            <div className="input-group input-group-sm m-1">
-                                                <span className="input-group-text">Contact</span>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    {...register("contact")}
-                                                />
-                                            </div>
-
-                                            <div className="input-group input-group-sm m-1">
-                                                <span className="input-group-text">PAN</span>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    {...register("pan")}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="text-center">
-                                        <button type="submit" className="btn btn-primary m-2">
-                                            {startSpinner && <div className="spinner-border text-light spinner-border-sm pr-1" role="status"></div>}
-                                            <span>Save</span>
-                                        </button>
-                                        <button type="reset" className="btn btn-outline-primary">
-                                            Clear
-                                        </button>
                                     </div>
                                 </div>
-                            </form>
 
+                                {/* Buttons Section */}
+                                <div className="d-flex justify-content-center gap-3 mt-4">
+                                    <button type="submit" className="btn btn-primary px-4">
+                                        {startSpinner && <output className="spinner-border text-light spinner-border-sm me-2" aria-live="polite"></output>}
+                                        <span>Save</span>
+                                    </button>
+                                    <button type="reset" className="btn btn-outline-primary px-4">
+                                        Clear
+                                    </button>
+                                </div>
+                            </form>
                         </div>
 
                     </div>

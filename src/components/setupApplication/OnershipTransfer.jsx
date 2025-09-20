@@ -31,7 +31,6 @@ function OnershipTransfer() {
 
   
   return (
-    <>
       <div className="work-space-container">
         <div className="container">
           <div className="alert alert-primary text-center font-weight-bold text-dark p-1" role="alert">
@@ -106,8 +105,8 @@ function OnershipTransfer() {
                       </div>
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="col-6 ">
+                  <div className="row m-2">
+                    <div className="col-6 my-2">
                       <h6>
                         Existing Owner Details <hr />
                       </h6>
@@ -253,7 +252,7 @@ function OnershipTransfer() {
                         </button>
                       </div>
                     </div>
-                    <div className="col-6 ">
+                    <div className="col-6 my-2">
                       <h6>
                         New Owner Details <hr />
                       </h6>
@@ -489,7 +488,6 @@ function OnershipTransfer() {
           </div>
         </div>
       </div>
-    </>
   );
 }
 

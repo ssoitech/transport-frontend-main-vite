@@ -1,27 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import ModalExportConsigneeMaster from './modals/ModalExportConsigneeMaster';
-import { BaseUrl } from '../../services/BaseURI';
+import React, { useEffect } from 'react';
 import Swal from "sweetalert2";
-import { useForm, Controller } from 'react-hook-form';
-import AutoComplete from '../searchComponent/AutoComplete';
-import toast from 'react-hot-toast';
-import DisplayTruckListTable from './truckSections/DisplayTruckListTable';
 import { Tab, Tabs } from 'react-bootstrap';
 import AddNewTruck from './truckSections/AddNewTruck';
-import TruckList from './truckSections/TruckList';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import TruckDetailsList from './truckSection/TruckDetailsList';
 
-const defaultOptions = [
-    { name: '', label: 'loading..' },
-];
 function TruckDetails() {
     const accessDetails = useSelector((state) => state.access.accessDetails);
     const navigate = useNavigate();
-
-    const [searchedOwnerData, setSearchedOwnerData] = useState();
 
     useEffect(() => {
         if (accessDetails) {
@@ -43,7 +30,7 @@ function TruckDetails() {
             navigate('/work-space');
         }
 
-    }, []);
+    }, [accessDetails, navigate]);
 
 
     return (

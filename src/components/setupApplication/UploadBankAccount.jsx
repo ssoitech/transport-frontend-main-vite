@@ -14,19 +14,19 @@ const UploadBankAccount = () => {
     const [validExceldata, setValidExceldata] = useState([]);
     const [duplicateRecords, setDuplicateRecords] = useState(0);
     const [invalidRecords, setInvalidRecords] = useState([]);
-    const [formData, setFormData] = useState({
-        ownerName: '',
-        pan: '',
-        contactNumber: '',
-        bankAccountNumber: '',
-        ifsc: '',
-        bankName: '',
-        branchName: '',
-        address: ''
-    });
+    // const [formData, setFormData] = useState({
+    //     ownerName: '',
+    //     pan: '',
+    //     contactNumber: '',
+    //     bankAccountNumber: '',
+    //     ifsc: '',
+    //     bankName: '',
+    //     branchName: '',
+    //     address: ''
+    // });
 
     const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-    const mobileRegex = /^[6-9]\d{9}$/;
+    // const mobileRegex = /^[6-9]\d{9}$/;
     const bankAccountNumberRegex = /^[0-9]{9,18}$/; // Allows only digits, 9 to 18 in length
 
     useEffect(() => {
@@ -116,10 +116,10 @@ const UploadBankAccount = () => {
         reader.readAsArrayBuffer(file);
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFormData({ ...formData, [name]: value });
+    // };
 
 
 
@@ -192,7 +192,7 @@ const UploadBankAccount = () => {
                 <span className='mb-0 text-black h6'>Vehicle Owner/ Challan Holder Bank Details Upload (Multiple A/C)</span>
             </div>
             <Container>
-                <Row className="my-3">
+                <Row className="my-3 ">
                     <Col>
                         <Form.Group controlId="formFile" className="mb-3">
                             <Form.Label>Upload Excel File</Form.Label>
@@ -201,14 +201,34 @@ const UploadBankAccount = () => {
                         {/* <Button variant="primary" onClick={handleFileUpload}>Extract</Button> */}
                     </Col>
                 </Row>
-                <Row className="my-3">
+                <Row className="my-3 ">
                     <Col>
                         <Form>
                             <Row>
-                                <Col> <button className="btn btn-sm btn-primary" onClick={handleDownload}>
+                                <Col> 
+                                <button className="btn btn-sm btn-primary my-2" onClick={handleDownload}>
                                     Get Template
-                                </button></Col>
+                                </button>
+                                </Col>
+                               
+                                {/* <Col><Form.Control type="text" placeholder="" name="bankAccountNumber" /></Col> */}
                                 <Col>
+                                <button className="btn btn-sm btn-secondary my-2" onClick={handleNew}>New</button>
+                                </Col>
+                                <Col>
+
+                                    <button type="submit" className="btn btn-sm btn-success my-2" disabled={loading} onClick={handleSaveToDatabase}>
+                                        {loading ? (
+                                            <>
+                                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                Saving ...
+                                            </>
+                                        ) : (
+                                            'Save to Database'
+                                        )}
+                                    </button>
+                                </Col>
+                                 <Col>
                                     <Form.Group>
                                         <Form.Label>Duplicate Records</Form.Label>
                                         <Form.Control type="text" name="contactNumber" value={duplicateRecords} />
@@ -220,21 +240,6 @@ const UploadBankAccount = () => {
                                         <Form.Label>Total Valid Records</Form.Label>
                                         <Form.Control type="text" name="contactNumber" value={validExceldata.length} />
                                     </Form.Group>
-                                </Col>
-                                {/* <Col><Form.Control type="text" placeholder="" name="bankAccountNumber" /></Col> */}
-                                <Col><button className="btn btn-sm btn-secondary" onClick={handleNew}>New</button></Col>
-                                <Col>
-
-                                    <button type="submit" className="btn btn-sm btn-success w-100" disabled={loading} onClick={handleSaveToDatabase}>
-                                        {loading ? (
-                                            <>
-                                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                Saving ...
-                                            </>
-                                        ) : (
-                                            'Save to Database'
-                                        )}
-                                    </button>
                                 </Col>
                             </Row>
 
