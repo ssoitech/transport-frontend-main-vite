@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import axiosInstance from "../../config/AxiosConfig";
+// Reusable components
+import ReusableButton from "../reusable/ReusableButton";
+import ReusableInput from "../reusable/ReusableInput";
+import ReusableCard from "../reusable/ReusableCard";
+import ReusableTable from "../reusable/ReusableTable";
+import ReusableLoader from "../reusable/ReusableLoader";
+import ReusableSection from "../reusable/ReusableSection";
+import ReusableSelect from "../reusable/ReusableSelect";
+import ReusableToast from "../reusable/ReusableToast";
+import ReusableDatePicker from "../reusable/ReusableDatePicker";
 import PaginationComponent from "../customComponents/PaginationComponent";
+import { useApiQuery, useApiMutation } from "../../hooks/api/useApiQuery";
 
 function VehicleRateAnalysis() {
-  const { register, handleSubmit, setValue, control } = useForm();
+  const { register, handleSubmit, control } = useForm();
   const [searchedData, setSearchedData] = useState([]);
 
-  const [consignorOptions, setConsignorOptions] = useState([]);
-  const [consigneeOptions, setConsigneeOptions] = useState([]);
-  const [billToOptions, setBillToOptions] = useState([]);
-  const [loadingPointOptions, setLoadingPointOptions] = useState([]);
-  const [destinationOptions, setDestinationOptions] = useState([]);
+  // Removed duplicate state declarations for select options; now handled by React Query
 
   const [formData, setFormData] = useState();
   const [totalNumberOfData, setTotalNumberOfData] = useState([]);
@@ -32,92 +36,61 @@ function VehicleRateAnalysis() {
 
   const [pageSize, setPageSize] = useState(10); // Default page size is 10
 
-  useEffect(() => {
-    const fetchSelectOptions = async () => {
-      try {
-        const consignorRes = await axiosInstance.get(
-          "/api/v1/get/all/trader-billing-party-names"
-        );
-        const consignorArrayOfObjects = consignorRes.data.map((element) => {
-          return {
-            id: element[0],
-            name: element[1],
-          };
-        });
-        setConsignorOptions(consignorArrayOfObjects);
-        const consigneeRes = await axiosInstance.get(
-          "/api/v1/get/all/trader-billing-party-names"
-        );
-        const consigneeArrayOfObjects = consigneeRes.data.map((element) => {
-          return {
-            id: element[0],
-            name: element[1],
-          };
-        });
-        setConsigneeOptions(consigneeArrayOfObjects);
-        const billToRes = await axiosInstance.get(
-          "/api/v1/get/all/trader-billing-party-names"
-        );
-        const billToArrayOfObjects = billToRes.data.map((element) => {
-          return {
-            id: element[0],
-            name: element[1],
-          };
-        });
-        setBillToOptions(billToArrayOfObjects);
+  // Fetch select options using React Query
+  const { data: consignorOptions = [] } = useApiQuery({
+    key: "consignorOptions",
+    url: "/api/v1/get/all/trader-billing-party-names",
+    method: "get",
+    select: (data) =>
+      data.map((element) => ({ id: element[0], name: element[1] })),
+  });
+  const { data: consigneeOptions = [] } = useApiQuery({
+    key: "consigneeOptions",
+    url: "/api/v1/get/all/trader-billing-party-names",
+    method: "get",
+    select: (data) =>
+      data.map((element) => ({ id: element[0], name: element[1] })),
+  });
+  const { data: billToOptions = [] } = useApiQuery({
+    key: "billToOptions",
+    url: "/api/v1/get/all/trader-billing-party-names",
+    method: "get",
+    select: (data) =>
+      data.map((element) => ({ id: element[0], name: element[1] })),
+  });
+  const { data: loadingPointOptions = [] } = useApiQuery({
+    key: "loadingPointOptions",
+    url: "/api/v1/get/all/loading-point-names",
+    method: "get",
+    select: (data) =>
+      data.map((element) => ({ id: element[0], name: element[1] })),
+  });
+  const { data: destinationOptions = [] } = useApiQuery({
+    key: "destinationOptions",
+    url: "/api/v1/get/all/unloading-point-names",
+    method: "get",
+    select: (data) =>
+      data.map((element) => ({ id: element[0], name: element[1] })),
+  });
 
-        const loadingPointRes = await axiosInstance.get(
-          "/api/v1/get/all/loading-point-names"
-        );
-        const loadingPointResArrayOfObjects = loadingPointRes.data.map(
-          (element) => {
-            return {
-              id: element[0],
-              name: element[1],
-            };
-          }
-        );
-        setLoadingPointOptions(loadingPointResArrayOfObjects);
-        const destinationRes = await axiosInstance.get(
-          "/api/v1/get/all/unloading-point-names"
-        );
+  // React Query mutation for paginated search
+  const searchMutation = useApiMutation({
+    key: "findDailyReport",
+    url: "/api/v1/find-daily-report",
+    method: "post",
+    onSuccess: (response, variables) => {
+      setSearchedData(response.content);
+      setTotalNumberOfData(response.totalElements);
+      setTotalPages(response.totalPages);
+      setCurrentPage(variables.page);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
-        const destinationResArrayOfObjects = destinationRes.data.map(
-          (element) => {
-            return {
-              id: element[0],
-              name: element[1],
-            };
-          }
-        );
-        setDestinationOptions(destinationResArrayOfObjects);
-      } catch (error) {
-        console.error("Error loading options:", error);
-      }
-    };
-
-    fetchSelectOptions();
-  }, []);
-
-  async function getDataByPagenumber(fData, page) {
-    await axiosInstance
-      .post("/api/v1/find-daily-report", fData)
-      .then(function (response) {
-        // handle success
-        console.log(response.data);
-        // console.log(response.data.totalPages);
-        setSearchedData(response.data.content);
-        setTotalNumberOfData(response.data.totalElements);
-        setTotalPages(response.data.totalPages); // Set the total pages
-        setCurrentPage(page); // Set the current page
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error.response);
-      });
-  }
-
-  async function postFilteredData(data, page) {
+  // Prepare and trigger paginated search
+  function postFilteredData(data, page) {
     const searchedData = {
       consignor: data.consignor ? data.consignor : null,
       consignee: data.consignee ? data.consignee : null,
@@ -130,14 +103,11 @@ function VehicleRateAnalysis() {
       endDate: data.loadingToDate
         ? format(data.loadingToDate, "yyyy-MM-dd")
         : null,
-
       page: page,
       size: pageSize,
     };
     setFormData(searchedData);
-    console.log(searchedData);
-
-    getDataByPagenumber(searchedData, page);
+    searchMutation.mutate(searchedData);
   }
 
   const onSubmit = async (data) => {
@@ -162,42 +132,30 @@ function VehicleRateAnalysis() {
   };
   // ---  excel  --------------------------------------------------
 
-  // Function to fetch all data in a single API call
+  // React Query mutation for Excel export
+  const excelExportMutation = useApiMutation({
+    key: "findDailyReportForExcel",
+    url: "/api/v1/find-daily-report-for-excel",
+    method: "post",
+    onSuccess: (response) => {
+      setProgress(70);
+      exportDataToExcel(response);
+      setProgress(100);
+    },
+    onError: (error) => {
+      setLoading(false);
+      console.log(error);
+    },
+  });
+
+  // Function to fetch all data in a single API call and export
   const fetchData = async () => {
     setLoading(true);
     setProgress(0);
-    setIsExportComplete(false); // Reset state for new export
-
-    try {
-      // Simulate progress (just for user experience)
-      setProgress(30);
-
-      // set the conditions
-      if (!formData) {
-        return;
-      }
-
-      // Fetch all data in one API call
-
-      await axiosInstance
-        .post("/api/v1/find-daily-report-for-excel", formData)
-        .then(function (response) {
-          // handle success
-          // Simulate more progress
-          setProgress(70);
-          // Once data is fetched, export to Excel
-          exportDataToExcel(response.data);
-        })
-        .catch(function (error) {
-          // handle error
-          console.log(error.response);
-        });
-
-      setProgress(100); // Set progress to 100% when done
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    }
+    setIsExportComplete(false);
+    if (!formData) return;
+    setProgress(30);
+    excelExportMutation.mutate(formData);
   };
 
   // Function to format header keys from camelCase to "Title Case"
@@ -298,78 +256,39 @@ function VehicleRateAnalysis() {
         <span className="mb-0 h6">Vehicle Rate Analysis</span>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      {/* Filter Form using reusable components */}
+      <ReusableForm onSubmit={handleSubmit(onSubmit)}>
         <div className="form-row">
-          <div className="form-group col-md-2">
-            <label htmlFor="consigner">Consignor</label>
-            <select
-              {...register("consignor")}
-              className="form-select form-select-sm border-dark-subtle"
-            >
-              <option value="">Select All</option>
-              {consignorOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group col-md-2">
-            <label htmlFor="billingParty">Consignee</label>
-            <select
-              {...register("consignee")}
-              className="form-select form-select-sm border-dark-subtle"
-            >
-              <option value="">Select All</option>
-              {consigneeOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group col-md-2">
-            <label htmlFor="billingParty">Bill To</label>
-            <select
-              {...register("billTo")}
-              className="form-select form-select-sm border-dark-subtle"
-            >
-              <option value="">Select All</option>
-              {billToOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group col-md-3">
-            <label htmlFor="loadingPoint">Loading</label>
-            <select
-              {...register("loadingPoint")}
-              className="form-select form-select-sm border-dark-subtle"
-            >
-              <option value="">Select All</option>
-              {loadingPointOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group col-md-3">
-            <label htmlFor="destinationPoint">Unloading</label>
-            <select
-              {...register("destinationPoint")}
-              className="form-select form-select-sm border-dark-subtle"
-            >
-              <option value="">Select All</option>
-              {destinationOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <ReusableSelect
+            label="Consignor"
+            options={[{ id: "", name: "Select All" }, ...consignorOptions]}
+            {...register("consignor")}
+            className="form-select form-select-sm border-dark-subtle col-md-2"
+          />
+          <ReusableSelect
+            label="Consignee"
+            options={[{ id: "", name: "Select All" }, ...consigneeOptions]}
+            {...register("consignee")}
+            className="form-select form-select-sm border-dark-subtle col-md-2"
+          />
+          <ReusableSelect
+            label="Bill To"
+            options={[{ id: "", name: "Select All" }, ...billToOptions]}
+            {...register("billTo")}
+            className="form-select form-select-sm border-dark-subtle col-md-2"
+          />
+          <ReusableSelect
+            label="Loading"
+            options={[{ id: "", name: "Select All" }, ...loadingPointOptions]}
+            {...register("loadingPoint")}
+            className="form-select form-select-sm border-dark-subtle col-md-3"
+          />
+          <ReusableSelect
+            label="Unloading"
+            options={[{ id: "", name: "Select All" }, ...destinationOptions]}
+            {...register("destinationPoint")}
+            className="form-select form-select-sm border-dark-subtle col-md-3"
+          />
         </div>
         <div className="form-row">
           <div className="form-group col-md-4">
@@ -379,12 +298,12 @@ function VehicleRateAnalysis() {
                 control={control}
                 name="loadingFromDate"
                 render={({ field }) => (
-                  <DatePicker
+                  <ReusableDatePicker
                     {...field}
                     selected={field.value}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={field.onChange}
                     dateFormat="d-MMM-yyyy"
-                    placeholderText="Select a date"
+                    placeholder="Select a date"
                     className="date-picker-input w-100 pl-2"
                   />
                 )}
@@ -394,12 +313,12 @@ function VehicleRateAnalysis() {
                 control={control}
                 name="loadingToDate"
                 render={({ field }) => (
-                  <DatePicker
+                  <ReusableDatePicker
                     {...field}
                     selected={field.value}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={field.onChange}
                     dateFormat="d-MMM-yyyy"
-                    placeholderText="Select a date"
+                    placeholder="Select a date"
                     className="date-picker-input w-100 pl-2"
                   />
                 )}
@@ -407,19 +326,26 @@ function VehicleRateAnalysis() {
             </div>
           </div>
           <div className="pt-2">
-            <button type="submit" className="btn btn-sm btn-primary mt-4 ml-4">
+            <ReusableButton
+              type="submit"
+              variant="primary"
+              size="sm"
+              className="mt-4 ml-4"
+            >
               Proceed
-            </button>
-            <button
+            </ReusableButton>
+            <ReusableButton
               type="button"
-              className="btn btn-sm btn-primary mt-4 ml-4"
+              variant="primary"
+              size="sm"
+              className="mt-4 ml-4"
               onClick={handleExportClick}
             >
               Excel
-            </button>
+            </ReusableButton>
           </div>
         </div>
-      </form>
+      </ReusableForm>
 
       <div className="mx-auto mt-2">
         <div className="container mt-5">
@@ -432,31 +358,35 @@ function VehicleRateAnalysis() {
           </div>
           <hr />
           <div className="table-responsive">
-            <table className="table table-bordered table-hover">
-              <thead className="thead-dark">
-                <tr className="p-1 text-center">
-                  <th>S.L No</th>
-                  <th>Consignor</th>
-                  <th>Consignee</th>
-                  <th>Biling Party</th>
-                  <th>Loading Point</th>
-                  <th>Unloading Point</th>
-                  <th>Permit Date</th>
-                  <th>Permit Number</th>
-                  <th>Freight Rate</th>
-                  <th>Payment Rate</th>
-                  <th>Despatch Challan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {searchedData.length > 0 &&
-                  searchedData.map((item, index) => (
-                    <tr key={index} className="p-1">
-                      <td className="text-center">{index + 1}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+            <ReusableTable
+              columns={[
+                { Header: "S.L No", accessor: "slNo" },
+                { Header: "Consignor", accessor: "consignor" },
+                { Header: "Consignee", accessor: "consignee" },
+                { Header: "Biling Party", accessor: "billTo" },
+                { Header: "Loading Point", accessor: "loadingPoint" },
+                { Header: "Unloading Point", accessor: "destination" },
+                {
+                  Header: "Permit Date",
+                  accessor: "permitDate",
+                  Cell: ({ value }) =>
+                    value ? format(value, "dd-MMM-yyyy") : "",
+                },
+                { Header: "Permit Number", accessor: "permitNumber" },
+                { Header: "Freight Rate", accessor: "freightRate" },
+                { Header: "Payment Rate", accessor: "paymentRate" },
+                { Header: "Despatch Challan", accessor: "despatchChallan" },
+              ]}
+              data={
+                searchedData
+                  ? searchedData.map((item, idx) => ({
+                      ...item,
+                      slNo: idx + 1,
+                    }))
+                  : []
+              }
+              className="table-bordered table-hover"
+            />
           </div>
         </div>
 

@@ -1,116 +1,118 @@
 import React, { useState } from "react";
-import axiosInstance from "../../../config/AxiosConfig";
 import CryptoJS from "crypto-js";
+import ReusableModal from "../../reusable/ReusableModal";
+import ReusableButton from "../../reusable/ReusableButton";
+import ReusableTable from "../../reusable/ReusableTable";
+import ReusableLoader from "../../reusable/ReusableLoader";
+import { useApiQuery } from "../../../hooks/api/useApiQuery";
+
+/**
+ * PermitModal Component
+ * - Refactored to use reusable modal, button, table, and loader components
+ * - API logic for permit data uses generic useApiQuery hook (SOLID, DRY)
+ * - Follows world-class coding standards and maintainability
+ */
+const SECRET_KEY = "your-secret-key";
 
 const PermitModal = () => {
-    const [showModal, setShowModal] = useState(false);
-    const [permitData, setPermitData] = useState([]);
-    const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-    const SECRET_KEY = "your-secret-key";
-    // Function to open modal and fetch data
-    const handleShow = async () => {
-        setShowModal(true);
-        setLoading(true);
-        try {
-            const response = await axiosInstance.get("/api/vi/all/permit-for-modal"); // Replace with actual API
-            setPermitData(response.data);
-        } catch (error) {
-            console.error("Error fetching permit numbers:", error);
-        }
-        setLoading(false);
-    };
+  // Fetch permit data using React Query generic hook
+  const {
+    data: permitData = [],
+    isLoading,
+    error,
+    refetch,
+  } = useApiQuery({
+    key: "permit-modal",
+    url: "/api/vi/all/permit-for-modal", // Replace with actual API
+    method: "get",
+    enabled: showModal, // Only fetch when modal is open
+    select: (data) => data || [],
+  });
 
-    // Function to close modal
-    const handleClose = () => {
-        setShowModal(false);
-        setPermitData([]);
-    };
+  // Function to open modal and fetch data
+  const handleShow = () => {
+    setShowModal(true);
+    refetch();
+  };
 
+  // Function to close modal
+  const handleClose = () => {
+    setShowModal(false);
+  };
 
+  // Function to view details (encrypt and open in new tab)
+  const handleViewDetails = (id) => {
+    const encryptedId = CryptoJS.AES.encrypt(
+      id.toString(),
+      SECRET_KEY
+    ).toString();
+    const encodedId = encodeURIComponent(encryptedId);
+    window.open(`/permit-master-view-details/${encodedId}`, "_blank");
+  };
 
-    const handleViewDetails = (id) => {
-        // Encrypt the ID
-        const encryptedId = CryptoJS.AES.encrypt(id.toString(), SECRET_KEY).toString();
+  // Table columns for ReusableTable
+  const columns = [
+    { Header: "SL No", accessor: (row, i) => i + 1 },
+    { Header: "Permit Number", accessor: "permitNumber" },
+    { Header: "Date", accessor: "permitDate" },
+    {
+      Header: "Action",
+      accessor: "id",
+      Cell: ({ row }) => (
+        <a
+          href="#"
+          className="text-decoration-none"
+          onClick={(e) => {
+            e.preventDefault();
+            handleViewDetails(row.original.id);
+          }}
+        >
+          View Details
+        </a>
+      ),
+    },
+  ];
 
-        // Encode to make it URL-safe
-        const encodedId = encodeURIComponent(encryptedId);
-        window.open(`/permit-master-view-details/${encodedId}`, "_blank"); // Opens in a new tab
-    };
+  return (
+    <>
+      {/* Button to open modal */}
+      <ReusableButton
+        type="button"
+        className="m-4 btn btn-sm btn-secondary"
+        onClick={handleShow}
+      >
+        Display Previous Permits
+      </ReusableButton>
 
-    return (
-        <>
-            {/* Button to open modal */}
-            <button type="button" className="m-4 btn btn-sm btn-secondary" onClick={handleShow}>
-                Display Previous Permits
-            </button>
-
-            {/* Modal */}
-            {showModal && (
-                <div className="modal fade show d-block" tabIndex="-1" style={{ background: "rgba(0,0,0,0.5)" }}>
-                    <div className="modal-dialog modal-lg">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">{permitData.length > 0 ? `Permit Numbers (${permitData.length}) ` : "Permit Numbers"}</h5>
-                                <button type="button" className="btn-close" onClick={handleClose}></button>
-                            </div>
-                            <div className="modal-body">
-                                {loading ? (
-                                    <p>Loading permit data...</p>
-                                ) : (
-                                    <div className="table-responsive" style={{ maxHeight: "400px", overflowY: "auto" }}>
-                                        <table className="table table-sm table-striped table-bordered">
-                                            <thead className="table-dark">
-                                                <tr>
-                                                    <th>SL No</th>
-                                                    <th>Permit Number</th>
-                                                    <th>Date</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {permitData.length > 0 ? (
-                                                    permitData.map((permit, index) => (
-                                                        <tr key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>{permit.permitNumber}</td>
-                                                            <td>{permit.permitDate}</td>
-                                                            <td>
-                                                                <a href="#"
-                                                                    class="text-decoration-none"
-                                                                    onClick={(e) => {
-                                                                        e.preventDefault();
-                                                                        handleViewDetails(permit.id);
-                                                                    }}
-                                                                >
-                                                                    View Details
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    ))
-                                                ) : (
-                                                    <tr>
-                                                        <td colSpan="4" className="text-center">
-                                                            No permit data available.
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={handleClose}>
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
-    );
+      {/* Modal using reusable component */}
+      <ReusableModal
+        show={showModal}
+        onClose={handleClose}
+        title={`Permit Numbers${
+          permitData.length > 0 ? ` (${permitData.length})` : ""
+        }`}
+        size="lg"
+      >
+        {isLoading ? (
+          <ReusableLoader message="Loading permit data..." />
+        ) : (
+          <ReusableTable columns={columns} data={permitData} />
+        )}
+        {error && <div className="text-danger">Error loading permit data.</div>}
+        <div className="modal-footer">
+          <ReusableButton
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleClose}
+          >
+            Close
+          </ReusableButton>
+        </div>
+      </ReusableModal>
+    </>
+  );
 };
 
 export default PermitModal;

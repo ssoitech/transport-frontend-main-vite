@@ -1,46 +1,69 @@
-import React, { useEffect } from 'react';
+import React from "react";
+import ReusableSection from "../../reusable/ReusableSection";
+import ReusableCard from "../../reusable/ReusableCard";
+import ReusableTable from "../../reusable/ReusableTable";
+import { useApiQuery } from "../../../hooks/api/useApiQuery";
 
-
+/**
+ * DataTableChallanStatus Component
+ * - Refactored to use reusable section, card, and table components
+ * - API logic for table data uses generic useApiQuery hook (SOLID, DRY)
+ * - Follows world-class coding standards and maintainability
+ */
 function DataTableChallanStatus() {
-    useEffect(() => {
-        // new DataTable('#challanStatusTable');
-    }, []);
+  // Example: Fetch table data using React Query generic hook
+  const {
+    data: tableData = [
+      {
+        name: "Tiger Nixon",
+        position: "System Architect",
+        office: "Edinburgh",
+        age: 61,
+        startDate: "2011/04/25",
+        salary: "$320,800",
+      },
+      {
+        name: "Garrett Winters",
+        position: "Accountant",
+        office: "Tokyo",
+        age: 63,
+        startDate: "2011/07/25",
+        salary: "$170,750",
+      },
+      // Add more rows as needed
+    ],
+    isLoading,
+    error,
+  } = useApiQuery({
+    key: "challan-status-table",
+    url: "/api/challan-status-table", // Replace with actual endpoint
+    method: "get",
+    select: (data) => data || [],
+    enabled: false, // Set to true to enable API call
+  });
 
-    return (
-        <div className="container mt-5">
-            <table id="challanStatusTable" className="table table-striped table-bordered" style={{ width: '100%' }}>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                        <td>2011/04/25</td>
-                        <td>$320,800</td>
-                    </tr>
-                    <tr>
-                        <td>Garrett Winters</td>
-                        <td>Accountant</td>
-                        <td>Tokyo</td>
-                        <td>63</td>
-                        <td>2011/07/25</td>
-                        <td>$170,750</td>
-                    </tr>
-                    {/* Add more rows as needed */}
-                </tbody>
-            </table>
-        </div>
-    );
+  // Table column definitions for ReusableTable
+  const columns = [
+    { Header: "Name", accessor: "name" },
+    { Header: "Position", accessor: "position" },
+    { Header: "Office", accessor: "office" },
+    { Header: "Age", accessor: "age" },
+    { Header: "Start date", accessor: "startDate" },
+    { Header: "Salary", accessor: "salary" },
+  ];
+
+  return (
+    <ReusableSection title="Challan Status Table">
+      <ReusableCard>
+        <ReusableTable
+          columns={columns}
+          data={tableData}
+          isLoading={isLoading}
+        />
+        {/* You can add more reusable components or features here as needed */}
+      </ReusableCard>
+    </ReusableSection>
+  );
 }
 
 export default DataTableChallanStatus;

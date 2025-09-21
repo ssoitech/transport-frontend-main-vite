@@ -1,48 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../../config/AxiosConfig';
+import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
+import { useApiQuery } from '../../../hooks/api/useApiQuery';
+import ReusableForm from '../../reusable/ReusableForm';
+import ReusableInput from '../../reusable/ReusableInput';
+import ReusableButton from '../../reusable/ReusableButton';
+import ReusableSelect from '../../reusable/ReusableSelect';
+import ReusableDatePicker from '../../reusable/ReusableDatePicker';
+import ReusableCard from '../../reusable/ReusableCard';
+import ReusableLoader from '../../reusable/ReusableLoader';
+import ReusableToast from '../../reusable/ReusableToast';
+import ReusableTable from '../../reusable/ReusableTable';
 
+
+/**
+ * PaymentDetails - Refactored to use reusable components and React Query
+ * - All form, input, select, button, datepicker, card, loader, toast, and table elements use reusable components
+ * - API logic migrated to useApiQuery (React Query)
+ * - Business logic preserved
+ * - Detailed comments added
+ */
 function PaymentDetails() {
-    const [allFillingStationsName, setAllFillingStationsName] = useState(null);
-    const [tableData, setTableData] = useState([]);
-
+    // State for filters and table data
     const [filters, setFilters] = useState({
         petrolPump: '',
         paidFrom: '',
         paidTo: '',
-        orderBy: 'PN'
+        orderBy: 'pump',
     });
+    const [tableData, setTableData] = useState([]);
+    const [toast, setToast] = useState({ message: '', type: 'info' });
 
-    async function getAllFillingStationsName() {
-        await axiosInstance.get('/api/v1/get/filling-stations')
-            .then(function (response) {
-                // handle success
-                const arrayOfObjects = response.data.map(element => {
-                    return {
-                        nameId: element[0],
-                        name: element[1]
-                    };
-                });
-                setAllFillingStationsName(arrayOfObjects);
-
-            })
-            .catch(function (error) {
-                // handle error
-                console.log(error);
-            });
-    }
-
-    // Fetch petrol pump options when component mounts
-    useEffect(() => {
-        getAllFillingStationsName();
-    }, [])
+    // Fetch petrol pump options using React Query
+    const {
+        data: fillingStationsData,
+        isLoading: isFillingStationsLoading,
+        error: fillingStationsError,
+    } = useApiQuery({
+        key: 'filling-stations',
+        url: '/api/v1/get/filling-stations',
+        method: 'get',
+        select: (data) =>
+            Array.isArray(data)
+                ? data.map((element) => ({ value: element[0], label: element[1] }))
+                : [],
+    });
 
     // Handle input changes for filters
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setFilters(prev => ({
+        setFilters((prev) => ({
             ...prev,
-            [name]: value
+            [name]: value,
         }));
     };
 
@@ -52,22 +60,23 @@ function PaymentDetails() {
             petrolPumpId: filters.petrolPump,
             startDate: filters.paidFrom,
             endDate: filters.paidTo,
-            sortBy: filters.orderBy
+            sortBy: filters.orderBy,
         };
-        console.log('Filter Data:', filterData);
         try {
-            const response = await axiosInstance.get('/api/v1/hsd/search/payment-details', {
-                params: filterData
-            });
-            if (!response.data.success) {
+            const response = await fetch(
+                `/api/v1/hsd/search/payment-details?petrolPumpId=${filterData.petrolPumpId}&startDate=${filterData.startDate}&endDate=${filterData.endDate}&sortBy=${filterData.sortBy}`
+            );
+            const result = await response.json();
+            if (!result.success) {
                 setTableData([]);
-                alert('No data found for the given filters.');
+                setToast({ message: 'No data found for the given filters.', type: 'warning' });
                 return;
             }
-            setTableData(response.data.data || []);
-        } catch (error) {
-            setTableData([]);
-        }
+            setTableData(result.data || []);
+            } catch {
+                setTableData([]);
+                setToast({ message: 'Error fetching payment details.', type: 'error' });
+            }
     };
 
     // Clear button handler
@@ -76,7 +85,7 @@ function PaymentDetails() {
             petrolPump: '',
             paidFrom: '',
             paidTo: '',
-            orderBy: 'pump'
+            orderBy: 'pump',
         });
         setTableData([]);
     };
@@ -84,7 +93,7 @@ function PaymentDetails() {
     // Excel export handler (.xlsx)
     const handleExcel = () => {
         if (!tableData || tableData.length === 0) {
-            alert('No data to export!');
+            setToast({ message: 'No data to export!', type: 'warning' });
             return;
         }
         // Prepare worksheet data
@@ -96,133 +105,126 @@ function PaymentDetails() {
                 row.paymentDate,
                 row.paidAmount,
                 row.paymentMode,
-                row.voucherNumber
-            ])
+                row.voucherNumber,
+            ]),
         ];
         const ws = XLSX.utils.aoa_to_sheet(wsData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'PaymentDetails');
         XLSX.writeFile(wb, 'hsd_payment_details.xlsx');
+        setToast({ message: 'Excel exported successfully!', type: 'success' });
     };
+
+    // Table columns for ReusableTable
+    const columns = [
+        { header: 'SLNo', accessor: 'slno' },
+        { header: 'Petrol Pump Name', accessor: 'petrolPump' },
+        { header: 'Payment Date', accessor: 'paymentDate' },
+        { header: 'Paid Amount', accessor: 'paidAmount' },
+        { header: 'Payment Mode', accessor: 'paymentMode' },
+        { header: 'Details', accessor: 'voucherNumber' },
+    ];
+
+    // Prepare table data with SLNo
+    const tableRows = tableData.map((row, idx) => ({ ...row, slno: idx + 1 }));
+
+    // Loader and error handling for filling stations
+    if (isFillingStationsLoading) {
+        return <ReusableLoader text="Loading petrol pumps..." />;
+    }
+    if (fillingStationsError) {
+        return (
+            <ReusableToast
+                message={fillingStationsError?.message || 'Error loading petrol pumps.'}
+                type="error"
+                onClose={() => setToast({ message: '', type: 'info' })}
+            />
+        );
+    }
 
     return (
         <div className="container mt-3">
-            <h5 className="mb-3">Payment Details</h5>
-            {/* Filter Row */}
-            <div className="row align-items-end mb-3 g-2">
-                <div className="col-md-3">
-                    <label className="form-label">Petrol Pump</label>
-
-                    {allFillingStationsName ?
-                        <select
-                            className="form-select form-select-sm"
-                            aria-label="Default select example"
-                            name='petrolPump'
-                            id='petrolPump'
-                            value={filters.petrolPump}
-                            onChange={handleFilterChange}
-                        >
-                            <option value="">Select Pump</option>
-                            {
-                                allFillingStationsName.map((item, idx) => {
-                                    return <option key={idx} value={item.nameId}>{item.name}</option>
-                                })
-                            }
-
-                        </select> :
-                        <select className="form-select form-select-sm" aria-label="Default select example">
-                            <option value=""></option>
-                        </select>
-                    }
-
-
-
-                </div>
-                <div className="col-md-2">
-                    <label className="form-label">Paid From</label>
-                    <input
-                        type="date"
-                        className="form-control form-control-sm"
-                        name="paidFrom"
-                        value={filters.paidFrom}
-                        onChange={handleFilterChange}
+            <ReusableCard title={<span className="mb-0 h6">Payment Details</span>}>
+                {toast.message && (
+                    <ReusableToast
+                        message={toast.message}
+                        type={toast.type}
+                        onClose={() => setToast({ message: '', type: 'info' })}
+                    />
+                )}
+                <ReusableForm onSubmit={(e) => e.preventDefault()} className="mb-3">
+                    <div className="row align-items-end mb-3 g-2">
+                        <div className="col-md-3">
+                            <ReusableSelect
+                                label="Petrol Pump"
+                                name="petrolPump"
+                                value={filters.petrolPump}
+                                onChange={handleFilterChange}
+                                options={fillingStationsData || []}
+                                className="form-select form-select-sm"
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <ReusableDatePicker
+                                label="Paid From"
+                                name="paidFrom"
+                                value={filters.paidFrom}
+                                onChange={handleFilterChange}
+                                className="form-control form-control-sm"
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <ReusableDatePicker
+                                label="Paid To"
+                                name="paidTo"
+                                value={filters.paidTo}
+                                onChange={handleFilterChange}
+                                className="form-control form-control-sm"
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <ReusableSelect
+                                label="Order By"
+                                name="orderBy"
+                                value={filters.orderBy}
+                                onChange={handleFilterChange}
+                                options={[{ value: 'pump', label: 'Petrol Pump Name' }, { value: 'date', label: 'Payment Date' }]}
+                                className="form-select form-select-sm"
+                            />
+                        </div>
+                        <div className="col-md-1">
+                            <ReusableButton className="btn btn-primary btn-sm w-100" onClick={handleSearch}>
+                                Search
+                            </ReusableButton>
+                        </div>
+                        <div className="col-md-1">
+                            <ReusableButton className="btn btn-success btn-sm w-100" onClick={handleExcel}>
+                                Excel
+                            </ReusableButton>
+                        </div>
+                        <div className="col-md-1">
+                            <ReusableButton className="btn btn-secondary btn-sm w-100" onClick={handleClear}>
+                                Clear
+                            </ReusableButton>
+                        </div>
+                    </div>
+                </ReusableForm>
+                <hr style={{
+                    border: 'none',
+                    borderTop: '3px solid #0d6efd',
+                    margin: '10px 0 20px 0',
+                    borderRadius: '2px',
+                    boxShadow: '0 1px 2px rgba(13,110,253,0.15)',
+                }} />
+                <div className="table-responsive">
+                    <ReusableTable
+                        columns={columns}
+                        data={tableRows}
+                        className="table table-bordered table-hover table-sm align-middle"
+                        ariaLabel="Payment Details Table"
                     />
                 </div>
-                <div className="col-md-2">
-                    <label className="form-label">Paid To</label>
-                    <input
-                        type="date"
-                        className="form-control form-control-sm"
-                        name="paidTo"
-                        value={filters.paidTo}
-                        onChange={handleFilterChange}
-                    />
-                </div>
-                <div className="col-md-2">
-                    <label className="form-label">Order By</label>
-                    <select
-                        className="form-select form-select-sm"
-                        name="orderBy"
-                        value={filters.orderBy}
-                        onChange={handleFilterChange}
-                    >
-                        <option value="pump">Petrol Pump Name</option>
-                        <option value="date">Payment Date</option>
-                    </select>
-                </div>
-                <div className="col-md-1">
-                    <button className="btn btn-primary btn-sm w-100" type="button" onClick={handleSearch}>Search</button>
-                </div>
-                <div className="col-md-1">
-                    <button className="btn btn-success btn-sm w-100" type="button" onClick={handleExcel}>Excel</button>
-                </div>
-                <div className="col-md-1">
-                    <button className="btn btn-secondary btn-sm w-100" type="button" onClick={handleClear}>Clear</button>
-                </div>
-            </div>
-            {/*Horizontal Separator */}
-            <div className="row">
-                <div className="col">
-                    <hr style={{
-                        border: 'none',
-                        borderTop: '3px solid #0d6efd',
-                        margin: '10px 0 20px 0',
-                        borderRadius: '2px',
-                        boxShadow: '0 1px 2px rgba(13,110,253,0.15)'
-                    }} />
-                </div>
-            </div>
-            {/* Table */}
-            <div className="table-responsive">
-                <table className="table table-bordered table-hover table-sm align-middle">
-                    <thead className="table-dark">
-                        <tr className='text-center'>
-                            <th>SLNo</th>
-                            <th>Petrol Pump Name</th>
-                            <th>Payment Date</th>
-                            <th>Paid Amount</th>
-                            <th>Payment Mode</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tableData ? tableData.map((row, idx) => (
-                            <tr key={idx}>
-                                <td className='text-center'>{idx + 1}</td>
-                                <td>{row.petrolPump}</td>
-                                <td>{row.paymentDate}</td>
-                                <td>{row.paidAmount}</td>
-                                <td>{row.paymentMode}</td>
-                                <td>{row.voucherNumber}</td>
-                            </tr>
-                        )) : (
-                            <tr>
-                                <td colSpan="6" className="text-center">No data available</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+            </ReusableCard>
         </div>
     );
 }

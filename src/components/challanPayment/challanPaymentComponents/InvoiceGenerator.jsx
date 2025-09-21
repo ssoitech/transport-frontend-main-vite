@@ -1,8 +1,10 @@
-// src/components/InvoiceGenerator.js
 import React, { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import jsPDF from 'jspdf';
+// Removed unused jsPDF import
 import Invoice from './Invoice';
+// Reusable components
+import ReusableButton from '../../reusable/ReusableButton';
+import ReusableCard from '../../reusable/ReusableCard';
 
 const InvoiceGenerator = ({ closeModal }) => {
     const invoiceRef = useRef();
@@ -11,29 +13,26 @@ const InvoiceGenerator = ({ closeModal }) => {
         content: () => invoiceRef.current,
     });
 
-    const handleDownload = () => {
-        const doc = new jsPDF();
-        doc.text("Invoice", 20, 20);
-        // Customize the PDF content as needed
-        doc.save("invoice.pdf");
-    };
+    // Removed unused handleDownload function
 
     function handleCancel() {
         closeModal();
     }
 
+    // --- UI: Refactored to use reusable components ---
     return (
-        <div>
+        <ReusableCard>
             <Invoice ref={invoiceRef} />
-
-            <button type="button" className="btn btn-sm btn-primary" onClick={handlePrint}>
-                Print
-            </button>
-            <button type="button" className="btn btn-sm btn-outline-primary ml-2" onClick={handleCancel}>
-                Close
-            </button>
-            {/* <button onClick={handleDownload}>Download PDF</button> */}
-        </div>
+            <div className="mt-3 d-flex gap-2">
+                <ReusableButton type="button" variant="primary" size="sm" onClick={handlePrint}>
+                    Print
+                </ReusableButton>
+                <ReusableButton type="button" variant="outline-primary" size="sm" onClick={handleCancel}>
+                    Close
+                </ReusableButton>
+                {/* <ReusableButton type="button" variant="secondary" size="sm" onClick={handleDownload}>Download PDF</ReusableButton> */}
+            </div>
+        </ReusableCard>
     );
 };
 

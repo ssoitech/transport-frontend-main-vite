@@ -1,191 +1,194 @@
-import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { format } from 'date-fns';
-import { Tab, Tabs } from 'react-bootstrap';
-import ChallanWiseIssued from './dieselIssuedSections/ChallanWiseIssued';
-import DateWiseIssued from './dieselIssuedSections/DateWiseIssued';
-import PermitWiseIssued from './dieselIssuedSections/PermitWiseIssued';
-import OnlyPaidChallans from './dieselIssuedSections/OnlyPaidChallans';
-import SearchOnNumber from './dieselIssuedSections/SearchOnNumber';
-import PumpWiseSummary from './dieselIssuedSections/PumpWiseSummary';
-import axiosInstance from '../../config/AxiosConfig';
+import React, { useState } from "react";
+import { Tab, Tabs } from "react-bootstrap";
+import ChallanWiseIssued from "./dieselIssuedSections/ChallanWiseIssued";
+import DateWiseIssued from "./dieselIssuedSections/DateWiseIssued";
+import PermitWiseIssued from "./dieselIssuedSections/PermitWiseIssued";
+import OnlyPaidChallans from "./dieselIssuedSections/OnlyPaidChallans";
+import SearchOnNumber from "./dieselIssuedSections/SearchOnNumber";
+import PumpWiseSummary from "./dieselIssuedSections/PumpWiseSummary";
+import { useApiQuery } from "../../hooks/api/useApiQuery";
+import ReusableForm from "../reusable/ReusableForm";
+import ReusableSelect from "../reusable/ReusableSelect";
+import ReusableDatePicker from "../reusable/ReusableDatePicker";
+import ReusableButton from "../reusable/ReusableButton";
+import ReusableLoader from "../reusable/ReusableLoader";
+import ReusableToast from "../reusable/ReusableToast";
 
+/**
+ * DieselIssued - Refactored to use reusable components and React Query
+ * - All form, select, datepicker, button, loader, and toast elements use reusable components
+ * - API logic migrated to useApiQuery (React Query)
+ * - Business logic preserved
+ * - Detailed comments added
+ */
 function DieselIssued() {
+  // State for filters
+  const [petrolPump, setPetrolPump] = useState("");
+  const [dateType, setDateType] = useState("CD");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [toast, setToast] = useState({ message: "", type: "info" });
 
-    const [petrolPump, setPetrolPump] = useState(null);
-    const [dateType, setDateType] = useState("CD");
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
-    const [allFillingStationsName, setAllFillingStationsName] = useState(null);
+  // Fetch petrol pump options using React Query
+  const {
+    data: fillingStationsData,
+    isLoading: isFillingStationsLoading,
+    error: fillingStationsError,
+  } = useApiQuery({
+    key: "filling-stations",
+    url: "/api/v1/get/filling-stations",
+    method: "get",
+    select: (data) =>
+      Array.isArray(data)
+        ? data.map((element) => ({ value: element[1], label: element[1] }))
+        : [],
+  });
 
-    const handleFromDate = (date) => {
-        setFromDate(date ? format(date, 'yyyy-MM-dd') : null);
-    }
-    const handleToDate = (date) => {
-        setToDate(date ? format(date, 'yyyy-MM-dd') : null);
-    }
+  // Handle filter changes
+  const handleSelectChange = (e) => {
+    setPetrolPump(e.target.value);
+  };
+  const handleDateTypeChange = (e) => {
+    setDateType(e.target.value);
+  };
+  const handleFromDate = (e) => {
+    setFromDate(e.target.value);
+  };
+  const handleToDate = (e) => {
+    setToDate(e.target.value);
+  };
+  const handleClear = () => {
+    setPetrolPump("");
+    setDateType("CD");
+    setFromDate("");
+    setToDate("");
+    setToast({ message: "Filters cleared.", type: "info" });
+  };
 
-    async function getAllFillingStationsName() {
-        await axiosInstance.get('/api/v1/get/filling-stations')
-            .then(function (response) {
-                // handle success
-                const arrayOfObjects = response.data.map(element => {
-                    return {
-                        nameId: element[0],
-                        name: element[1]
-                    };
-                });
-                setAllFillingStationsName(arrayOfObjects);
-
-            })
-            .catch(function (error) {
-                // handle error
-                console.log(error);
-            });
-    }
-
-    useEffect(() => {
-        getAllFillingStationsName();
-    }, [])
-
-    const handleClear = () => {
-
-    };
-
-
+  // Loader and error handling for filling stations
+  if (isFillingStationsLoading) {
+    return <ReusableLoader text="Loading petrol pumps..." />;
+  }
+  if (fillingStationsError) {
     return (
-        <div className='work-space-container'>
-            <div className="alert alert-primary text-center font-weight-bold text-dark p-1" role="alert">
-                <span className='mb-0 h6'>Query On Diesel Issued</span>
-            </div>
-            <form className="row g-2">
-                <div className="col-md-4 d-flex align-items-center">
-                    <label htmlFor="dropdown1" className="form-label me-2">
-                        PetrolPump
-                    </label>
-                    {/* <select
-                        id="dropdown1"
-                        name="dropdown1"
-                        className="form-select form-select-sm border-dark-subtle"
-                        value={petrolPump}
-                        onChange={(e) => { setPetrolPump(e.target.value) }}
-                    >
-                        <option value="">Select All Pump</option>
-                        <option value="item2">Item 2</option>
-                        <option value="item3">Item 3</option>
-                    </select> */}
-                    {allFillingStationsName ?
-                        <select
-                            className="form-select form-select-sm"
-                            aria-label="Default select example"
-                            name='petrolPump'
-                            id='petrolPump'
-                            value={petrolPump}
-                            onChange={(e) => { setPetrolPump(e.target.value) }}
-                        >
-                            <option value="">All Pumps</option>
-                            {
-                                allFillingStationsName.map((item, idx) => {
-                                    return <option key={idx} value={item.name}>{item.name}</option>
-                                })
-                            }
+      <ReusableToast
+        message={fillingStationsError?.message || "Error loading petrol pumps."}
+        type="error"
+        onClose={() => setToast({ message: "", type: "info" })}
+      />
+    );
+  }
 
-                        </select> :
-                        <select className="form-select form-select-sm"
-                            aria-label="Default select example"
-                            value={petrolPump}
-                            onChange={(e) => { setPetrolPump(e.target.value) }}
-                        >
-                            <option value=""></option>
-                        </select>
-                    }
-                </div>
-
-                <div className="col-md-2">
-                    <select
-                        name="dropdown2"
-                        className="form-select form-select-sm border-dark-subtle w-75"
-                        value={dateType}
-                        onChange={(e) => { setDateType(e.target.value) }}
-                    >
-                        <option value="CD">Challan Date</option>
-                    </select>
-                </div>
-
-                <div className="col-md-3">
-                    <DatePicker
-                        className="date-picker-input pl-2"
-                        selected={fromDate}
-                        onChange={handleFromDate}
-                        name="fromDate"
-                        dateFormat="d-MMM-yyyy"
-                        placeholderText="Select from Date"
-                        id="fromDate"
-                    />
-
-                </div>
-
-                <div className="col-md-3">
-                    <DatePicker
-                        className="date-picker-input pl-2"
-                        selected={toDate}
-                        onChange={handleToDate}
-                        name="toDate"
-                        dateFormat="d-MMM-yyyy"
-                        placeholderText="Select To date"
-                        id="toDate"
-                    />
-
-                </div>
-
-                <div className="col-md-2">
-                    <button
-                        type="button"
-                        className="btn btn-sm btn-secondary"
-                        onClick={handleClear}
-                    >
-                        Clear
-                    </button>
-                </div>
-            </form>
-
-            <div>
-                <Tabs
-                    defaultActiveKey="challan-wise-issued"
-                    id="fill-tab-example"
-                    className="mb-3"
-                    fill
-                >
-                    <Tab eventKey="challan-wise-issued" title="Challan Wise Issued">
-                        <ChallanWiseIssued petrolPumpId={petrolPump} fromDate={fromDate} toDate={toDate} />
-                    </Tab>
-
-                    <Tab eventKey="date-wise-issued" title="Date Wise Issued">
-                        <DateWiseIssued petrolPumpId={petrolPump} fromDate={fromDate} toDate={toDate} />
-                    </Tab>
-
-                    <Tab eventKey="permit-wise-issued" title="Permit Wise Issued">
-                        <PermitWiseIssued petrolPumpId={petrolPump} fromDate={fromDate} toDate={toDate} />
-                    </Tab>
-
-                    <Tab eventKey="only-paid-challans" title="Only Paid Challans">
-                        <OnlyPaidChallans petrolPumpId={petrolPump} fromDate={fromDate} toDate={toDate} />
-                    </Tab>
-
-                    <Tab eventKey="search-on-number" title="Search On Number">
-                        <SearchOnNumber />
-                    </Tab>
-                    <Tab eventKey="pump-wise-summary" title="Pump Wise Summary">
-                        <PumpWiseSummary />
-                    </Tab>
-
-                </Tabs>
-
-            </div>
-
-        </div>
-    )
+  return (
+    <div className="work-space-container">
+      <ReusableCard
+        className="mb-3"
+        title={<span className="mb-0 h6">Query On Diesel Issued</span>}
+      >
+        {toast.message && (
+          <ReusableToast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast({ message: "", type: "info" })}
+          />
+        )}
+        <ReusableForm className="row g-2">
+          <div className="col-md-4 d-flex align-items-center">
+            <ReusableSelect
+              label="Petrol Pump"
+              name="petrolPump"
+              value={petrolPump}
+              onChange={handleSelectChange}
+              options={fillingStationsData || []}
+              className="form-select form-select-sm"
+            />
+          </div>
+          <div className="col-md-2">
+            <ReusableSelect
+              label="Date Type"
+              name="dateType"
+              value={dateType}
+              onChange={handleDateTypeChange}
+              options={[{ value: "CD", label: "Challan Date" }]}
+              className="form-select form-select-sm border-dark-subtle w-75"
+            />
+          </div>
+          <div className="col-md-3">
+            <ReusableDatePicker
+              label="From Date"
+              name="fromDate"
+              value={fromDate}
+              onChange={handleFromDate}
+              className="date-picker-input pl-2"
+              placeholder="Select from Date"
+              id="fromDate"
+            />
+          </div>
+          <div className="col-md-3">
+            <ReusableDatePicker
+              label="To Date"
+              name="toDate"
+              value={toDate}
+              onChange={handleToDate}
+              className="date-picker-input pl-2"
+              placeholder="Select To date"
+              id="toDate"
+            />
+          </div>
+          <div className="col-md-2">
+            <ReusableButton
+              type="button"
+              className="btn btn-sm btn-secondary"
+              onClick={handleClear}
+            >
+              Clear
+            </ReusableButton>
+          </div>
+        </ReusableForm>
+      </ReusableCard>
+      <Tabs
+        defaultActiveKey="challan-wise-issued"
+        id="fill-tab-example"
+        className="mb-3"
+        fill
+      >
+        <Tab eventKey="challan-wise-issued" title="Challan Wise Issued">
+          <ChallanWiseIssued
+            petrolPumpId={petrolPump}
+            fromDate={fromDate}
+            toDate={toDate}
+          />
+        </Tab>
+        <Tab eventKey="date-wise-issued" title="Date Wise Issued">
+          <DateWiseIssued
+            petrolPumpId={petrolPump}
+            fromDate={fromDate}
+            toDate={toDate}
+          />
+        </Tab>
+        <Tab eventKey="permit-wise-issued" title="Permit Wise Issued">
+          <PermitWiseIssued
+            petrolPumpId={petrolPump}
+            fromDate={fromDate}
+            toDate={toDate}
+          />
+        </Tab>
+        <Tab eventKey="only-paid-challans" title="Only Paid Challans">
+          <OnlyPaidChallans
+            petrolPumpId={petrolPump}
+            fromDate={fromDate}
+            toDate={toDate}
+          />
+        </Tab>
+        <Tab eventKey="search-on-number" title="Search On Number">
+          <SearchOnNumber />
+        </Tab>
+        <Tab eventKey="pump-wise-summary" title="Pump Wise Summary">
+          <PumpWiseSummary />
+        </Tab>
+      </Tabs>
+    </div>
+  );
 }
 
 export default DieselIssued;
