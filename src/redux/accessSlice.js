@@ -1,21 +1,20 @@
 // accessSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const accessSlice = createSlice({
-    name: 'access',
-    initialState: {
-        accessDetails: [],
+  name: "access",
+  initialState: {
+    accessDetails: [],
+  },
+  reducers: {
+    setAccessDetails: (state, action) => {
+      state.accessDetails = action.payload;
     },
-    reducers: {
-        setAccessDetails: (state, action) => {
-            state.accessDetails = action.payload;
-        },
-        clearAccessDetails: (state) => {
-            state.accessDetails = [];
-        },
+    clearAccessDetails: (state) => {
+      state.accessDetails = [];
     },
+  },
 });
 
 export const { setAccessDetails, clearAccessDetails } = accessSlice.actions;
 export default accessSlice.reducer;
-

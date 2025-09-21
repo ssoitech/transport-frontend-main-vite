@@ -135,6 +135,230 @@ import BankAdvancePayment from "./components/challanInput/bankAdvanceProcess/Ban
 import BankAdvancePending from "./components/challanInput/bankAdvanceProcess/BankAdvancePending";
 // -----------------------------------------
 
+// Route config array for protected routes
+const protectedRoutes = [
+  { path: "/work-space", element: WorkSpace, layout: Layout },
+  {
+    path: "/permit-master-view-details/:encodedId",
+    element: PermitMasterReadOnlyDynamicPage,
+  },
+  { path: "/passing-weight", element: VehiclePassingWeight, layout: Layout },
+  {
+    path: "/mines-consignor-master",
+    element: MinesConsignorOwnerMaster,
+    layout: Layout,
+  },
+  {
+    path: "/export-consignee-master",
+    element: ExporterConsigneeMaster,
+    layout: Layout,
+  },
+  {
+    path: "/trader-billing-party-master",
+    element: TraderBillingPartyMaster,
+    layout: Layout,
+  },
+  {
+    path: "/field-staff-fleet-agent",
+    element: FieldStaffFleetAgent,
+    layout: Layout,
+  },
+  { path: "/truck-owner", element: TruckOwner, layout: Layout },
+  { path: "/truck-number", element: TruckDetails, layout: Layout },
+  { path: "/challan-holder", element: ChallanHolder, layout: Layout },
+  {
+    path: "/tds-declaration-data",
+    element: TdsDeclarationData,
+    layout: Layout,
+  },
+  { path: "/account-master", element: BankAccountMaster, layout: Layout },
+  { path: "/pre-information", element: PreInformation, layout: Layout },
+  { path: "/ownership-transfer", element: OnershipTransfer, layout: Layout },
+  { path: "/upload-bank-account", element: UploadBankAccount, layout: Layout },
+  {
+    path: "/vehicle-number-upload",
+    element: VehicleNumberUpload,
+    layout: Layout,
+  },
+  {
+    path: "/excel-bulk-upload-data",
+    element: ExcelBulkUploadData,
+    layout: Layout,
+  },
+  { path: "/permit-master-form-I", element: PermitMasterFormi, layout: Layout },
+  {
+    path: "/challan-loading-entry-manual",
+    element: ChallanLoadingEntry,
+    layout: Layout,
+  },
+  {
+    path: "/unloading-challan-entry-manual",
+    element: ChallanUnLoadingEntry,
+    layout: Layout,
+  },
+  {
+    path: "/excel-file-upload-full",
+    element: ExcelFileUploadDespatchDataFull,
+    layout: Layout,
+  },
+  {
+    path: "/excel-file-upload-selection",
+    element: ExcelFileUploadDespatchDataFullSelection,
+    layout: Layout,
+  },
+  {
+    path: "/mark-challan-as-unloaded",
+    element: MarkChallanAsUnload,
+    layout: Layout,
+  },
+  { path: "/update-vehicle-rate", element: UpdateVehicleRate, layout: Layout },
+  { path: "/freight-vs-advance", element: FreightVsAdvance, layout: Layout },
+  {
+    path: "/input-advance-data-on-permitwise",
+    element: InputAdvanceDataOnPermitWise,
+    layout: Layout,
+  },
+  {
+    path: "/input-advance-data-on-single-challan",
+    element: InputAdvanceDataOnSingleChallan,
+    layout: Layout,
+  },
+  {
+    path: "/upload-advance-data-from-excel",
+    element: UploadAdvanceDataFromExcel,
+    layout: Layout,
+  },
+  { path: "/bank-advance-entry", element: BankAdvanceEntry, layout: Layout },
+  {
+    path: "/bank-advance-paid-report",
+    element: BankAdvancePaidReport,
+    layout: Layout,
+  },
+  {
+    path: "/bank-advance-payment",
+    element: BankAdvancePayment,
+    layout: Layout,
+  },
+  {
+    path: "/bank-advance-pending",
+    element: BankAdvancePending,
+    layout: Layout,
+  },
+  { path: "/delete-excel-data", element: DeleteExcelData, layout: Layout },
+  {
+    path: "/check-cancelled-challan",
+    element: CheckCancelledChallan,
+    layout: Layout,
+  },
+  {
+    path: "/remove-cancelled-challan",
+    element: RemoveCancelledChallan,
+    layout: Layout,
+  },
+  { path: "/challan-status", element: ChallanStatus, layout: Layout },
+  {
+    path: "/vehicle-rate-analysis",
+    element: VehicleRateAnalysis,
+    layout: Layout,
+  },
+  {
+    path: "/challan-received-entry",
+    element: ChallanReceivedEntry,
+    layout: Layout,
+  },
+  {
+    path: "/challan-payment-single",
+    element: ChallanPaymentSingle,
+    layout: Layout,
+  },
+  {
+    path: "/challan-payment-bulk",
+    element: ChallanPaymentBulk,
+    layout: Layout,
+  },
+  {
+    path: "/ledger-party-payment",
+    element: LedgerPartyPayment,
+    layout: Layout,
+  },
+  { path: "/reference-summary", element: ReferenceSummary, layout: Layout },
+  {
+    path: "/payment-reference-list",
+    element: PaymentReferenceList,
+    layout: Layout,
+  },
+  {
+    path: "/payment-reference-details",
+    element: PaymentReferenceDetails,
+    layout: Layout,
+  },
+  {
+    path: "/challan-status-received",
+    element: ChallanStatusReceived,
+    layout: Layout,
+  },
+  { path: "/pending-for-process", element: PendingForProcess, layout: Layout },
+  {
+    path: "/ledger-customer-challan",
+    element: LedgerCustomerChallan,
+    layout: Layout,
+  },
+  {
+    path: "/challan-holder-payment",
+    element: ChallanHolderPayment,
+    layout: Layout,
+  },
+  { path: "/payment-summary", element: PaymentSummary, layout: Layout },
+  {
+    path: "/payment-details-challan-wise",
+    element: PaymentDetailsChallanWise,
+    layout: Layout,
+  },
+  { path: "/diesel-issued", element: DieselIssued, layout: Layout },
+  {
+    path: "/hsd-challan-reconsile",
+    element: HsdChallanReconsile,
+    layout: Layout,
+  },
+  {
+    path: "/hsd-bill-received-format-1",
+    element: HsdBillReceivedFormat1,
+    layout: Layout,
+  },
+  {
+    path: "/hsd-bill-received-format-2",
+    element: HsdBillReceivedFormat2,
+    layout: Layout,
+  },
+  {
+    path: "/hsd-bill-received-format-3",
+    element: HsdBillReceivedFormat3,
+    layout: Layout,
+  },
+  {
+    path: "/filling-station-payment",
+    element: FillingStationPayment,
+    layout: Layout,
+  },
+  {
+    path: "/filling-station-adjustment-entry",
+    element: FillingStationAdjustmentEntry,
+    layout: Layout,
+  },
+  {
+    path: "/filling-station-ledger",
+    element: FillingStationLedger,
+    layout: Layout,
+  },
+  {
+    path: "/multiple-pump-setting",
+    element: MultiplePumpSetting,
+    layout: Layout,
+  },
+  { path: "/billing-work-space", element: WorkSpace, layout: BillingLayout },
+  { path: "/billing-start", element: First, layout: BillingLayout },
+];
+
 function App() {
   return (
     <BrowserRouter>
@@ -142,1257 +366,16 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
-
-          {/* Protect the dashboard route */}
-          <Route
-            path="/work-space"
-            element={
-              <PrivateRoute
-                element={WorkSpace}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            path="/permit-master-view-details/:encodedId" // Dynamic route
-            element={<PrivateRoute element={PermitMasterReadOnlyDynamicPage} />}
-          />
-
-          <Route
-            path="/passing-weight"
-            element={
-              <PrivateRoute
-                element={VehiclePassingWeight}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/mines-consignor-master"
-            element={
-              <PrivateRoute
-                element={MinesConsignorOwnerMaster}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/export-consignee-master"
-            element={
-              <PrivateRoute
-                element={ExporterConsigneeMaster}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/trader-billing-party-master"
-            element={
-              <PrivateRoute
-                element={TraderBillingPartyMaster}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/field-staff-fleet-agent"
-            element={
-              <PrivateRoute
-                element={FieldStaffFleetAgent}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/truck-owner"
-            element={
-              <PrivateRoute
-                element={TruckOwner}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/truck-number"
-            element={
-              <PrivateRoute
-                element={TruckDetails}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/challan-holder"
-            element={
-              <PrivateRoute
-                element={ChallanHolder}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/tds-declaration-data"
-            element={
-              <PrivateRoute
-                element={TdsDeclarationData}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/account-master"
-            element={
-              <PrivateRoute
-                element={BankAccountMaster}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/pre-information"
-            element={
-              <PrivateRoute
-                element={PreInformation}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/ownership-transfer"
-            element={
-              <PrivateRoute
-                element={OnershipTransfer}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/upload-bank-account"
-            element={
-              <PrivateRoute
-                element={UploadBankAccount}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/vehicle-number-upload"
-            element={
-              <PrivateRoute
-                element={VehicleNumberUpload}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/excel-bulk-upload-data"
-            element={
-              <PrivateRoute
-                element={ExcelBulkUploadData}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          {/* challan input tab routes */}
-          <Route
-            exact="true"
-            path="/permit-master-form-I"
-            element={
-              <PrivateRoute
-                element={PermitMasterFormi}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/challan-loading-entry-manual"
-            element={
-              <PrivateRoute
-                element={ChallanLoadingEntry}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/unloading-challan-entry-manual"
-            element={
-              <PrivateRoute
-                element={ChallanUnLoadingEntry}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/excel-file-upload-full"
-            element={
-              <PrivateRoute
-                element={ExcelFileUploadDespatchDataFull}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/excel-file-upload-selection"
-            element={
-              <PrivateRoute
-                element={ExcelFileUploadDespatchDataFullSelection}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/mark-challan-as-unloaded"
-            element={
-              <PrivateRoute
-                element={MarkChallanAsUnload}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/update-vehicle-rate"
-            element={
-              <PrivateRoute
-                element={UpdateVehicleRate}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/freight-vs-advance"
-            element={
-              <PrivateRoute
-                element={FreightVsAdvance}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/input-advance-data-on-permitwise"
-            element={
-              <PrivateRoute
-                element={InputAdvanceDataOnPermitWise}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-          <Route
-            exact="true"
-            path="/input-advance-data-on-single-challan"
-            element={
-              <PrivateRoute
-                element={InputAdvanceDataOnSingleChallan}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/upload-advance-data-from-excel"
-            element={
-              <PrivateRoute
-                element={UploadAdvanceDataFromExcel}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          {/* Bank advance section start */}
-
-          <Route
-            exact="true"
-            path="/bank-advance-entry"
-            element={
-              <PrivateRoute
-                element={BankAdvanceEntry}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/bank-advance-paid-report"
-            element={
-              <PrivateRoute
-                element={BankAdvancePaidReport}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/bank-advance-payment"
-            element={
-              <PrivateRoute
-                element={BankAdvancePayment}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/bank-advance-pending"
-            element={
-              <PrivateRoute
-                element={BankAdvancePending}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          {/* Bank advance section end */}
-
-          <Route
-            exact="true"
-            path="/delete-excel-data"
-            element={
-              <PrivateRoute
-                element={DeleteExcelData}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/check-cancelled-challan"
-            element={
-              <PrivateRoute
-                element={CheckCancelledChallan}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/remove-cancelled-challan"
-            element={
-              <PrivateRoute
-                element={RemoveCancelledChallan}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/challan-status"
-            element={
-              <PrivateRoute
-                element={ChallanStatus}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/vehicle-rate-analysis"
-            element={
-              <PrivateRoute
-                element={VehicleRateAnalysis}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/challan-received-entry"
-            element={
-              <PrivateRoute
-                element={ChallanReceivedEntry}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/challan-payment-single"
-            element={
-              <PrivateRoute
-                element={ChallanPaymentSingle}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-          <Route
-            exact="true"
-            path="/challan-payment-bulk"
-            element={
-              <PrivateRoute
-                element={ChallanPaymentBulk}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/ledger-party-payment"
-            element={
-              <PrivateRoute
-                element={LedgerPartyPayment}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/reference-summary"
-            element={
-              <PrivateRoute
-                element={ReferenceSummary}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/payment-reference-list"
-            element={
-              <PrivateRoute
-                element={PaymentReferenceList}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-          <Route
-            exact="true"
-            path="/payment-reference-details"
-            element={
-              <PrivateRoute
-                element={PaymentReferenceDetails}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/challan-status-received"
-            element={
-              <PrivateRoute
-                element={ChallanStatusReceived}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/pending-for-process"
-            element={
-              <PrivateRoute
-                element={PendingForProcess}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/ledger-customer-challan"
-            element={
-              <PrivateRoute
-                element={LedgerCustomerChallan}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/challan-holder-payment"
-            element={
-              <PrivateRoute
-                element={ChallanHolderPayment}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/payment-summary"
-            element={
-              <PrivateRoute
-                element={PaymentSummary}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/payment-details-challan-wise"
-            element={
-              <PrivateRoute
-                element={PaymentDetailsChallanWise}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          {/* HSD Register section */}
-
-          <Route
-            exact="true"
-            path="/diesel-issued"
-            element={
-              <PrivateRoute
-                element={DieselIssued}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/hsd-challan-reconsile"
-            element={
-              <PrivateRoute
-                element={HsdChallanReconsile}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/hsd-bill-received-format-1"
-            element={
-              <PrivateRoute
-                element={HsdBillReceivedFormat1}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/hsd-bill-received-format-2"
-            element={
-              <PrivateRoute
-                element={HsdBillReceivedFormat2}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/hsd-bill-received-format-3"
-            element={
-              <PrivateRoute
-                element={HsdBillReceivedFormat3}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/filling-station-payment"
-            element={
-              <PrivateRoute
-                element={FillingStationPayment}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/filling-station-adjustment-entry"
-            element={
-              <PrivateRoute
-                element={FillingStationAdjustmentEntry}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/filling-station-ledger"
-            element={
-              <PrivateRoute
-                element={FillingStationLedger}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/multiple-pump-setting"
-            element={
-              <PrivateRoute
-                element={MultiplePumpSetting}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          {/* HSD Register section End */}
-
-          {/* Queary Section   start*/}
-          <Route
-            exact
-            path="/permit-master-list"
-            element={
-              <Layout>
-                <PermitMasterList />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/daily-loading-summary"
-            element={
-              <Layout>
-                <DailyLoadingSummary />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/loading-report-challan-wise"
-            element={
-              <Layout>
-                <LoadingReportChallanWise />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/unloading-report"
-            element={
-              <Layout>
-                <UnloadingReport />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/loading-report-permit-vs-date"
-            element={
-              <Layout>
-                <LoadingReportPermitDate />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/undelivered-report"
-            element={
-              <Layout>
-                <UnDelivedReport />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/nr-challan-report"
-            element={
-              <Layout>
-                <NRChallanReport />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/cancelled-challan-report"
-            element={
-              <Layout>
-                <CancelledChallanReport />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/check-challan-amount"
-            element={
-              <Layout>
-                <CheckChallanAmount />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/freight-balance-due"
-            element={
-              <Layout>
-                <FreightBalanceDue />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/truck-list"
-            element={
-              <Layout>
-                <TruckList />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/truck-owner-list"
-            element={
-              <Layout>
-                <TruckOwnerList />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/challan-holder-list"
-            element={
-              <Layout>
-                <ChallanHolderList />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/tds-declaration-status"
-            element={
-              <Layout>
-                <TDSDeclarationStatus />
-              </Layout>
-            }
-          />
-
-          <Route
-            exact
-            path="/truck-loading-history"
-            element={
-              <Layout>
-                <TruckLoadindHistory />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/own-and-discounted-challan"
-            element={
-              <Layout>
-                <OwnAndDiscountChallan />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/payment-ledger"
-            element={
-              <Layout>
-                <PaymentLedgerQ />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/known-truck-status"
-            element={
-              <Layout>
-                <KnownTruckStatusQ />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/un-known-truck-status"
-            element={
-              <Layout>
-                <UnknownTruckStatus />
-              </Layout>
-            }
-          />
-          {/* queary section end  */}
-
-          {/* report section start */}
-
-          {/* --------------------------------------Report Start------------------------------ */}
-          <Route
-            exact
-            path="/daily-report"
-            element={
-              <Layout>
-                <DailyReport />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/payable-summary"
-            element={
-              <Layout>
-                <PayableSummary />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/advance-paid"
-            element={
-              <Layout>
-                <AdvancePaid />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/received-vs-paid-vs-due"
-            element={
-              <Layout>
-                <RecivedVsPaidVSDue />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/toll-gate-statement"
-            element={
-              <Layout>
-                <TollGateStatement />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/tds-collated-statement"
-            element={
-              <Layout>
-                <TdsCollatedStatement />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/freight-paid-in-details"
-            element={
-              <Layout>
-                <FreightPaidInDetails />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/truck-wise-freight-paid"
-            element={
-              <Layout>
-                <TruckWiseFreightPaid />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/loading-material"
-            element={
-              <Layout>
-                <LoadingMaterial />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/un-loading-material"
-            element={
-              <Layout>
-                <UnLoadingMaterial />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/freight-paid"
-            element={
-              <Layout>
-                <FreightPaid />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/permit-number-quantity"
-            element={
-              <Layout>
-                <PermitNumberQuantity />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/permit-number-payment"
-            element={
-              <Layout>
-                <PermitNumberPayment />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/typeof-vehicle-used"
-            element={
-              <Layout>
-                <TypeOfVehicleUsed />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/truck-wise-freight"
-            element={
-              <Layout>
-                <TruckWiseFreight />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/owner-wise-freight"
-            element={
-              <Layout>
-                <OwnerWiseFreight />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/job-perfomance"
-            element={
-              <Layout>
-                <JobPerfomance />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/all-permit-summary"
-            element={
-              <Layout>
-                <AllPermitSummary />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/single-permit-status"
-            element={
-              <Layout>
-                <SinglePermitStatus />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/permit-wise-freigh-payable"
-            element={
-              <Layout>
-                <PermitWiseFreightPayable />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/month-wise-perfomance"
-            element={
-              <Layout>
-                <MonthWisePerfomance />
-              </Layout>
-            }
-          />
-          <Route
-            exact
-            path="/monthly-ddm-return"
-            element={
-              <Layout>
-                <MonthlyDdmReturn />
-              </Layout>
-            }
-          />
-          {/* ---------------report------------------------------------------------------------------------------------- */}
-
-          {/* report section end */}
-
-          {/* Administration */}
-
-          <Route
-            exact="true"
-            path="/nr-truck-posting"
-            element={
-              <PrivateRoute
-                element={NrTruckPosting}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/despatch-summary"
-            element={
-              <PrivateRoute
-                element={DespatchSummary}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-          <Route
-            exact="true"
-            path="/manage-challan-holder-bank-account"
-            element={
-              <PrivateRoute
-                element={ManageChallanHolderBankAccount}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/manage-ledger-customer"
-            element={
-              <PrivateRoute
-                element={ManageLedgerCustomer}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/application-user"
-            element={
-              <PrivateRoute
-                element={ApplicationUser}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/company-and-bank-details"
-            element={
-              <PrivateRoute
-                element={CompanyAndBankDetails}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/remove-from-bulk-payment"
-            element={
-              <PrivateRoute
-                element={RemoveFromBulkPayment}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/verify-reference"
-            element={
-              <PrivateRoute
-                element={VerifyRemovedReference}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/freight-rate-verification"
-            element={
-              <PrivateRoute
-                element={FreightRateVerification}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/entry-job-performance"
-            element={
-              <PrivateRoute
-                element={EntryJobPerformance}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/stop-payment-process"
-            element={
-              <PrivateRoute
-                element={StopPaymentProcess}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/update-iform"
-            element={
-              <PrivateRoute
-                element={UpdateTpFormi}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          {/* User Specific */}
-
-          <Route
-            exact="true"
-            path="/day-wise-loading-summary"
-            element={
-              <PrivateRoute
-                element={DayWiseLoadingSummary}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/day-wise-un-loading-summary"
-            element={
-              <PrivateRoute
-                element={DayWiseUnLoadingSummary}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/delivery-days"
-            element={
-              <PrivateRoute
-                element={DeliveryDays}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/consolidated-on-all"
-            element={
-              <PrivateRoute
-                element={ConsolidatedOnAll}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/permit-wise-loading-work"
-            element={
-              <PrivateRoute
-                element={PermitWiseLoadingWork}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-          <Route
-            exact="true"
-            path="/permit-wise-un-loading-work"
-            element={
-              <PrivateRoute
-                element={PermitWiseUnLoadingWork}
-                layout={Layout} // Pass the layout component
-              />
-            }
-          />
-
-          {/* billing section routes start*/}
-
-          <Route
-            path="/billing-work-space"
-            element={
-              <PrivateRoute
-                element={WorkSpace}
-                layout={BillingLayout} // Pass the layout component
-              />
-            }
-          />
-
-          <Route
-            exact="true"
-            path="/billing-start"
-            element={
-              <PrivateRoute
-                element={First}
-                layout={BillingLayout} // Pass the layout component
-              />
-            }
-          />
+          {/* Protected routes mapped from config */}
+          {protectedRoutes.map(({ path, element, layout }, idx) => (
+            <Route
+              key={path}
+              path={path}
+              element={<PrivateRoute element={element} layout={layout} />}
+            />
+          ))}
+          {/* Add catch-all 404 route */}
+          <Route path="*" element={<div>404 - Page Not Found</div>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
